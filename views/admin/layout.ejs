@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= typeof title !== 'undefined' ? title + ' - ' : '' %>Admin Mansa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar-active { @apply bg-blue-700 text-white; }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="w-64 bg-gray-800 text-white flex-shrink-0">
+            <div class="p-4">
+                <h1 class="text-xl font-bold">Admin Mansa</h1>
+            </div>
+            <nav class="mt-8">
+                <a href="/dashboard" class="flex items-center px-4 py-2 hover:bg-gray-700 <%= typeof currentPage !== 'undefined' && currentPage === 'dashboard' ? 'bg-blue-700' : '' %>">
+                    <i class="fas fa-tachometer-alt mr-3"></i>
+                    Dashboard
+                </a>
+                <a href="/products" class="flex items-center px-4 py-2 hover:bg-gray-700 <%= typeof currentPage !== 'undefined' && currentPage === 'products' ? 'bg-blue-700' : '' %>">
+                    <i class="fas fa-box mr-3"></i>
+                    Produits
+                </a>
+                <a href="/products/stock" class="flex items-center px-4 py-2 hover:bg-gray-700 <%= typeof currentPage !== 'undefined' && currentPage === 'stock' ? 'bg-blue-700' : '' %>">
+                    <i class="fas fa-warehouse mr-3"></i>
+                    Stocks
+                </a>
+                <a href="/orders" class="flex items-center px-4 py-2 hover:bg-gray-700 <%= typeof currentPage !== 'undefined' && currentPage === 'orders' ? 'bg-blue-700' : '' %>">
+                    <i class="fas fa-shopping-cart mr-3"></i>
+                    Commandes
+                </a>
+                <a href="/customers" class="flex items-center px-4 py-2 hover:bg-gray-700 <%= typeof currentPage !== 'undefined' && currentPage === 'customers' ? 'bg-blue-700' : '' %>">
+                    <i class="fas fa-users mr-3"></i>
+                    Clients
+                </a>
+                <a href="/reviews" class="flex items-center px-4 py-2 hover:bg-gray-700 <%= typeof currentPage !== 'undefined' && currentPage === 'reviews' ? 'bg-blue-700' : '' %>">
+                    <i class="fas fa-star mr-3"></i>
+                    Avis
+                </a>
+                <a href="/logout" class="flex items-center px-4 py-2 hover:bg-gray-700 text-red-300">
+                    <i class="fas fa-sign-out-alt mr-3"></i>
+                    Déconnexion
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Header -->
+            <header class="bg-white shadow-sm border-b">
+                <div class="flex items-center justify-between px-6 py-4">
+                    <h2 class="text-xl font-semibold text-gray-800">
+                        <%= typeof pageTitle !== 'undefined' ? pageTitle : 'Administration' %>
+                    </h2>
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm text-gray-600">Bienvenue, Admin</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content Area -->
+            <main class="flex-1 overflow-y-auto p-6">
+                <% if (typeof error !== 'undefined' && error) { %>
+                    <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                        <%= error %>
+                    </div>
+                <% } %>
+                
+                <% if (typeof success !== 'undefined' && success) { %>
+                    <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+                        <%= success %>
+                    </div>
+                <% } %>
+
+                <%- body %>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

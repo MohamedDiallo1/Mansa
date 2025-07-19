@@ -1,0 +1,180 @@
+<%- include('../partials/header', { 
+    title: 'Ajouter un produit',
+    currentPage: 'products',
+    pageTitle: 'Ajouter un produit',
+    headerActions: '<a href="/products" class="btn-secondary px-4 py-2 rounded-lg"><i class="fas fa-arrow-left mr-2"></i>Retour</a>'
+}) %>
+
+                <div class="bg-white shadow rounded-lg p-6">
+                    <form action="/products/add" method="POST" enctype="multipart/form-data" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Nom du produit -->
+                            <div>
+                                <label for="nom" class="block text-sm font-medium text-gray-700">
+                                    Nom du produit *
+                                </label>
+                                <input type="text" name="nom" id="nom" required
+                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+
+                            <!-- Matière -->
+                            <div>
+                                <label for="matiere" class="block text-sm font-medium text-gray-700">
+                                    Matière *
+                                </label>
+                                <select name="matiere" id="matiere" required
+                                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">Sélectionner une matière</option>
+                                    <option value="bazin">Bazin</option>
+                                    <option value="wax">Wax</option>
+                                    <option value="tissu">Tissu</option>
+                                </select>
+                            </div>
+
+                            <!-- Type -->
+                            <div>
+                                <label for="type" class="block text-sm font-medium text-gray-700">
+                                    Type *
+                                </label>
+                                <select name="type" id="type" required
+                                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">Sélectionner un type</option>
+                                    <option value="2-pieces">2 pièces</option>
+                                    <option value="3-pieces">3 pièces</option>
+                                </select>
+                            </div>
+
+                            <!-- Catégorie -->
+                            <div>
+                                <label for="categorie" class="block text-sm font-medium text-gray-700">
+                                    Catégorie
+                                </label>
+                                <select name="categorie" id="categorie"
+                                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">Sélectionner une catégorie</option>
+                                    <option value="ceremonie">Cérémonie</option>
+                                    <option value="casual">Casual</option>
+                                    <option value="business">Business</option>
+                                </select>
+                            </div>
+
+                            <!-- Prix d'achat -->
+                            <div>
+                                <label for="prix_achat" class="block text-sm font-medium text-gray-700">
+                                    Prix d'achat (€)
+                                </label>
+                                <input type="number" name="prix_achat" id="prix_achat" step="0.01"
+                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+
+                            <!-- Prix de vente -->
+                            <div>
+                                <label for="prix_vente" class="block text-sm font-medium text-gray-700">
+                                    Prix de vente (€) *
+                                </label>
+                                <input type="number" name="prix_vente" id="prix_vente" step="0.01" required
+                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+
+                            <!-- Prix promo -->
+                            <div>
+                                <label for="prix_promo" class="block text-sm font-medium text-gray-700">
+                                    Prix promo (€)
+                                </label>
+                                <input type="number" name="prix_promo" id="prix_promo" step="0.01"
+                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                        </div>
+
+                        <!-- Description courte -->
+                        <div>
+                            <label for="description_courte" class="block text-sm font-medium text-gray-700">
+                                Description courte
+                            </label>
+                            <textarea name="description_courte" id="description_courte" rows="3"
+                                      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"></textarea>
+                        </div>
+
+                        <!-- Description longue -->
+                        <div>
+                            <label for="description_longue" class="block text-sm font-medium text-gray-700">
+                                Description détaillée
+                            </label>
+                            <textarea name="description_longue" id="description_longue" rows="6"
+                                      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-bogolan-500 focus:border-bogolan-500"></textarea>
+                        </div>
+
+                        <!-- Images du produit -->
+                        <div>
+                            <label for="images" class="block text-sm font-medium text-gray-700">
+                                Images du produit
+                            </label>
+                            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:border-bogolan-400 transition-colors">
+                                <div class="space-y-1 text-center">
+                                    <i class="fas fa-cloud-upload-alt text-4xl text-gray-400"></i>
+                                    <div class="flex text-sm text-gray-600">
+                                        <label for="images" class="relative cursor-pointer bg-white rounded-md font-medium text-bogolan-600 hover:text-bogolan-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-bogolan-500">
+                                            <span>Télécharger des images</span>
+                                            <input id="images" name="images" type="file" class="sr-only" multiple accept="image/*" onchange="previewImages(event)">
+                                        </label>
+                                        <p class="pl-1">ou glisser-déposer</p>
+                                    </div>
+                                    <p class="text-xs text-gray-500">
+                                        PNG, JPG, GIF jusqu'à 5MB (5 images max)
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- Preview des images -->
+                            <div id="imagePreview" class="mt-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 hidden">
+                            </div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="flex justify-end space-x-3">
+                            <a href="/products" class="bg-terre-300 text-terre-700 px-4 py-2 rounded-lg hover:bg-terre-400 transition-colors">
+                                Annuler
+                            </a>
+                            <button type="submit" class="btn-primary px-4 py-2 rounded-lg transition-colors">
+                                <i class="fas fa-plus mr-2"></i>
+                                Créer le produit
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+<script>
+function previewImages(event) {
+    const preview = document.getElementById('imagePreview');
+    const files = event.target.files;
+    
+    // Vider le preview
+    preview.innerHTML = '';
+    
+    if (files.length > 0) {
+        preview.classList.remove('hidden');
+        
+        for (let i = 0; i < Math.min(files.length, 5); i++) {
+            const file = files[i];
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const div = document.createElement('div');
+                div.className = 'relative group';
+                div.innerHTML = `
+                    <img src="${e.target.result}" class="w-full h-24 object-cover rounded-lg border-2 border-bogolan-200">
+                    <div class="absolute top-1 right-1 bg-bogolan-600 text-white text-xs px-2 py-1 rounded">
+                        ${i === 0 ? 'Principal' : 'Galerie'}
+                    </div>
+                `;
+                preview.appendChild(div);
+            };
+            
+            reader.readAsDataURL(file);
+        }
+    } else {
+        preview.classList.add('hidden');
+    }
+}
+</script>
+
+<%- include('../partials/footer') %>

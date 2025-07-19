@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'bogolan': '#8B4513',
+                        'terre': '#D2691E',
+                        'bogolan-light': '#A0522D',
+                        'terre-light': '#F4A460'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <!-- Top bar -->
+        <div class="bg-bogolan text-white text-sm py-2">
+            <div class="container mx-auto px-4 flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <span><i class="fas fa-truck mr-2"></i>Livraison gratuite dès 150€</span>
+                    <span><i class="fas fa-phone mr-2"></i>+33 7 66 72 63 76</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <% if (user) { %>
+                        <a href="/profil" class="hover:text-terre transition-colors">
+                            <i class="fas fa-user mr-1"></i>Bonjour <%= user.prenom %>
+                        </a>
+                        <form action="/deconnexion" method="post" class="inline">
+                            <button type="submit" class="hover:text-terre transition-colors">
+                                <i class="fas fa-sign-out-alt mr-1"></i>Déconnexion
+                            </button>
+                        </form>
+                    <% } else { %>
+                        <a href="/connexion" class="hover:text-terre transition-colors">
+                            <i class="fas fa-sign-in-alt mr-1"></i>Connexion
+                        </a>
+                        <a href="/inscription" class="hover:text-terre transition-colors">
+                            <i class="fas fa-user-plus mr-1"></i>Inscription
+                        </a>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main navigation -->
+        <nav class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <a href="/" class="text-3xl font-bold text-bogolan">
+                        MANSA
+                    </a>
+                    <span class="ml-2 text-sm text-gray-600">Prêt-à-porter masculin</span>
+                </div>
+
+                <!-- Navigation links -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="/" class="text-gray-700 hover:text-bogolan transition-colors font-medium">
+                        Accueil
+                    </a>
+                    <a href="/boutique" class="text-gray-700 hover:text-bogolan transition-colors font-medium">
+                        Boutique
+                    </a>
+                    <a href="/Collection" class="text-gray-700 hover:text-bogolan transition-colors font-medium">
+                        New Collection
+                    </a>
+                    <a href="/Contact" class="text-gray-700 hover:text-bogolan transition-colors font-medium">
+                        Contact
+                    </a>
+                    <a href="/Propos" class="text-gray-700 hover:text-bogolan transition-colors font-medium">
+                        A Propos
+                    </a>
+                    
+                </div>
+
+                <!-- Cart and mobile menu -->
+                <div class="flex items-center space-x-4">
+                    <!-- Search -->
+                    <button class="text-gray-700 hover:text-bogolan transition-colors">
+                        <i class="fas fa-search text-xl"></i>
+                    </button>
+
+                    <!-- Cart -->
+                    <div class="relative">
+                        <a href="/panier" class="text-gray-700 hover:text-bogolan transition-colors">
+                            <i class="fas fa-shopping-cart text-xl"></i>
+                            <span id="cart-count" class="absolute -top-2 -right-2 bg-terre text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                                0
+                            </span>
+                        </a>
+                    </div>
+
+                    <!-- User menu -->
+                    <% if (user) { %>
+                        <div class="relative group">
+                            <button class="text-gray-700 hover:text-bogolan transition-colors">
+                                <i class="fas fa-user text-xl"></i>
+                            </button>
+                            <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                                <div class="py-2">
+                                    <a href="/profil" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                                        <i class="fas fa-user mr-2"></i>Mon Profil
+                                    </a>
+                                    <a href="/mes-commandes" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                                        <i class="fas fa-box mr-2"></i>Mes Commandes
+                                    </a>
+                                    <div class="border-t border-gray-100"></div>
+                                    <form action="/deconnexion" method="post" class="block">
+                                        <button type="submit" class="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">
+                                            <i class="fas fa-sign-out-alt mr-2"></i>Déconnexion
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    <% } %>
+
+                    <!-- Mobile menu button -->
+                    <button id="mobile-menu-btn" class="md:hidden text-gray-700 hover:text-bogolan transition-colors">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile menu -->
+            <div id="mobile-menu" class="md:hidden mt-4 hidden">
+                <div class="flex flex-col space-y-2 bg-white rounded-lg shadow-lg p-4">
+                    <a href="/" class="text-gray-700 hover:text-bogolan transition-colors font-medium py-2">
+                        Accueil
+                    </a>
+                    <a href="/boutique" class="text-gray-700 hover:text-bogolan transition-colors font-medium py-2">
+                        Boutique
+                    </a>
+                    
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main content -->
+    <main>
+
+<script>
+// Fonction pour charger le compteur du panier
+async function loadCartCount() {
+    try {
+        const response = await fetch('/api/panier/count');
+        const data = await response.json();
+        
+        if (data.success) {
+            document.getElementById('cart-count').textContent = data.count;
+        }
+    } catch (error) {
+        console.error('Erreur comptage panier:', error);
+    }
+}
+
+// Charger le compteur au chargement de la page
+document.addEventListener('DOMContentLoaded', () => {
+    <% if (user) { %>
+        loadCartCount();
+    <% } %>
+});
+
+// Toggle mobile menu
+document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    if (mobileMenuBtn && mobileMenu) {
+        mobileMenuBtn.addEventListener('click', function() {
+            mobileMenu.classList.toggle('hidden');
+        });
+    }
+});
+</script>

@@ -1,0 +1,577 @@
+<%- include('partials/header', { title: title, user: user }) %>
+
+<!-- Hero Section avec Slider -->
+<section class="relative h-screen overflow-hidden">
+    <div class="hero-slider">
+        <!-- Slide 1 -->
+        <div class="slide active">
+            <div class="absolute inset-0 bg-gradient-to-r from-bogolan via-bogolan-light to-terre"></div>
+            <div class="absolute inset-0 bg-black bg-opacity-40"></div>
+            <div class="relative h-full flex items-center justify-center">
+                <div class="text-center text-white max-w-4xl px-4">
+                    <h1 class="text-5xl md:text-7xl font-bold mb-6 animate-fade-in-up">
+                        MANSA
+                    </h1>
+                    <p class="text-xl md:text-3xl mb-8 animate-fade-in-up-delay-1">
+                        L'élégance masculine africaine
+                    </p>
+                    <p class="text-lg md:text-xl mb-12 animate-fade-in-up-delay-2">
+                        Découvrez notre collection exclusive d'ensembles en bazin, wax et tissu
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up-delay-3">
+                        <a href="/boutique" class="inline-block bg-white text-bogolan px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-all transform hover:scale-105">
+                            Découvrir la collection
+                        </a>
+                        <a href="/boutique?nouveaute=1" class="inline-block border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-bogolan transition-all transform hover:scale-105">
+                            Nouveautés
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="slide">
+            <div class="absolute inset-0 bg-gradient-to-r from-terre via-terre-light to-bogolan"></div>
+            <div class="absolute inset-0 bg-black bg-opacity-40"></div>
+            <div class="relative h-full flex items-center justify-center">
+                <div class="text-center text-white max-w-4xl px-4">
+                    <h1 class="text-5xl md:text-7xl font-bold mb-6 animate-fade-in-up">
+                        BAZIN RICHE
+                    </h1>
+                    <p class="text-xl md:text-3xl mb-8 animate-fade-in-up-delay-1">
+                        Tradition & Raffinement
+                    </p>
+                    <p class="text-lg md:text-xl mb-12 animate-fade-in-up-delay-2">
+                        Des ensembles traditionnels revisités avec une touche contemporaine
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up-delay-3">
+                        <a href="/boutique?matiere=bazin" class="inline-block bg-white text-bogolan px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-all transform hover:scale-105">
+                            Collection Bazin
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="slide">
+            <div class="absolute inset-0 bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800"></div>
+            <div class="absolute inset-0 bg-black bg-opacity-40"></div>
+            <div class="relative h-full flex items-center justify-center">
+                <div class="text-center text-white max-w-4xl px-4">
+                    <h1 class="text-5xl md:text-7xl font-bold mb-6 animate-fade-in-up">
+                        WAX & TISSU
+                    </h1>
+                    <p class="text-xl md:text-3xl mb-8 animate-fade-in-up-delay-1">
+                        Couleurs & Motifs
+                    </p>
+                    <p class="text-lg md:text-xl mb-12 animate-fade-in-up-delay-2">
+                        Exprimez votre personnalité avec nos imprimés authentiques
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up-delay-3">
+                        <a href="/boutique?matiere=wax" class="inline-block bg-white text-bogolan px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-all transform hover:scale-105">
+                            Collection Wax
+                        </a>
+                        <a href="/boutique?matiere=tissu" class="inline-block border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-bogolan transition-all transform hover:scale-105">
+                            Collection Tissu
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation dots -->
+    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2">
+        <button class="dot active" data-slide="0"></button>
+        <button class="dot" data-slide="1"></button>
+        <button class="dot" data-slide="2"></button>
+    </div>
+
+    <!-- Navigation arrows -->
+    <button class="slider-nav prev" onclick="changeSlide(-1)">
+        <i class="fas fa-chevron-left"></i>
+    </button>
+    <button class="slider-nav next" onclick="changeSlide(1)">
+        <i class="fas fa-chevron-right"></i>
+    </button>
+</section>
+
+<!-- Collections animées -->
+<section class="py-20 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl md:text-5xl font-bold text-bogolan mb-4 animate-on-scroll">
+                Nos Collections
+            </h2>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto animate-on-scroll">
+                Découvrez l'artisanat africain dans toute sa splendeur
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Bazin -->
+            <div class="collection-card group animate-on-scroll">
+                <div class="relative overflow-hidden rounded-2xl shadow-xl">
+                    <div class="aspect-square bg-gradient-to-br from-bogolan to-bogolan-light"></div>
+                    <div class="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-20 transition-all duration-500"></div>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="text-center text-white transform group-hover:scale-105 transition-transform duration-500">
+                            <h3 class="text-3xl font-bold mb-4">Bazin Riche</h3>
+                            <p class="text-lg mb-6">Tradition & Élégance</p>
+                            <a href="/boutique?matiere=bazin" class="inline-block bg-white text-bogolan px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-all transform hover:scale-105">
+                                Découvrir
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wax -->
+            <div class="collection-card group animate-on-scroll">
+                <div class="relative overflow-hidden rounded-2xl shadow-xl">
+                    <div class="aspect-square bg-gradient-to-br from-terre to-terre-light"></div>
+                    <div class="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-20 transition-all duration-500"></div>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="text-center text-white transform group-hover:scale-105 transition-transform duration-500">
+                            <h3 class="text-3xl font-bold mb-4">Wax</h3>
+                            <p class="text-lg mb-6">Motifs Authentiques</p>
+                            <a href="/boutique?matiere=wax" class="inline-block bg-white text-bogolan px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-all transform hover:scale-105">
+                                Découvrir
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tissu -->
+            <div class="collection-card group animate-on-scroll">
+                <div class="relative overflow-hidden rounded-2xl shadow-xl">
+                    <div class="aspect-square bg-gradient-to-br from-blue-600 to-blue-800"></div>
+                    <div class="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-20 transition-all duration-500"></div>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="text-center text-white transform group-hover:scale-105 transition-transform duration-500">
+                            <h3 class="text-3xl font-bold mb-4">Tissu</h3>
+                            <p class="text-lg mb-6">Matières Premium</p>
+                            <a href="/boutique?matiere=tissu" class="inline-block bg-white text-bogolan px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-all transform hover:scale-105">
+                                Découvrir
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Produits Vedettes avec animation -->
+<% if (produits && produits.length > 0) { %>
+<section class="py-20">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl md:text-5xl font-bold text-bogolan mb-4 animate-on-scroll">
+                Produits Vedettes
+            </h2>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto animate-on-scroll">
+                Nos pièces les plus appréciées par nos clients
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <% produits.forEach((produit, index) => { %>
+                <div class="product-card bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden animate-on-scroll group" style="animation-delay: <%= index * 0.1 %>s">
+                    <div class="aspect-square bg-gray-200 relative overflow-hidden">
+                        <% if (produit.images) { %>
+                            <% 
+                            let images;
+                            try {
+                                images = typeof produit.images === 'string' ? JSON.parse(produit.images) : produit.images;
+                            } catch(e) {
+                                images = null;
+                            }
+                            %>
+                            <% if (images && images.principale) { %>
+                                <img src="/uploads/products/<%= images.principale %>" alt="<%= produit.nom %>" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'w-full h-full bg-gradient-to-br from-bogolan to-terre flex items-center justify-center\'><i class=\'fas fa-image text-white text-4xl opacity-50\'></i></div>'">
+                            <% } else { %>
+                                <div class="w-full h-full bg-gradient-to-br from-bogolan to-terre flex items-center justify-center">
+                                    <i class="fas fa-image text-white text-4xl opacity-50"></i>
+                                </div>
+                            <% } %>
+                        <% } else { %>
+                            <div class="w-full h-full bg-gradient-to-br from-bogolan to-terre flex items-center justify-center">
+                                <i class="fas fa-image text-white text-4xl opacity-50"></i>
+                            </div>
+                        <% } %>
+                        
+                        <!-- Overlay avec actions -->
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
+                            <div class="flex space-x-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <a href="/produit/<%= produit.id %>" class="bg-white text-bogolan p-3 rounded-full hover:bg-gray-100 transition-all transform hover:scale-110">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <% if (user && produit.stock_total > 0) { %>
+                                    <button onclick="addToCart(<%= produit.id %>)" class="bg-bogolan text-white p-3 rounded-full hover:bg-bogolan-light transition-all transform hover:scale-110">
+                                        <i class="fas fa-shopping-cart"></i>
+                                    </button>
+                                <% } %>
+                            </div>
+                        </div>
+
+                        <!-- Badges -->
+                        <div class="absolute top-4 left-4 space-y-2">
+                            <% if (produit.nouveaute) { %>
+                                <span class="bg-green-500 text-white text-xs px-3 py-1 rounded-full font-semibold">
+                                    Nouveau
+                                </span>
+                            <% } %>
+                            <% if (produit.prix_promo && produit.prix_promo > 0) { %>
+                                <span class="bg-red-500 text-white text-xs px-3 py-1 rounded-full font-semibold">
+                                    Promo
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    
+                    <div class="p-6">
+                        <h3 class="font-bold text-xl mb-2 text-gray-800 group-hover:text-bogolan transition-colors">
+                            <%= produit.nom %>
+                        </h3>
+                        <p class="text-gray-600 text-sm mb-4">
+                            <%= produit.matiere %> • <%= produit.type %>
+                        </p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <% if (produit.prix_promo && produit.prix_promo > 0) { %>
+                                    <span class="text-2xl font-bold text-red-600">
+                                        <%= parseFloat(produit.prix_promo).toFixed(2) %>€
+                                    </span>
+                                    <span class="text-sm text-gray-500 line-through">
+                                        <%= parseFloat(produit.prix_vente).toFixed(2) %>€
+                                    </span>
+                                <% } else { %>
+                                    <span class="text-2xl font-bold text-bogolan">
+                                        <%= parseFloat(produit.prix_vente).toFixed(2) %>€
+                                    </span>
+                                <% } %>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span class="text-sm text-gray-500">
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <%= produit.note_moyenne || 0 %>
+                                </span>
+                                <% if (produit.stock_total > 0) { %>
+                                    <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                                        En stock
+                                    </span>
+                                <% } else { %>
+                                    <span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full">
+                                        Rupture
+                                    </span>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+        
+        <div class="text-center mt-12 animate-on-scroll">
+            <a href="/boutique" class="inline-block bg-bogolan text-white px-10 py-4 rounded-lg font-semibold hover:bg-bogolan-light transition-all transform hover:scale-105">
+                Voir toute la collection
+            </a>
+        </div>
+    </div>
+</section>
+<% } %>
+
+<!-- Section Avantages avec animations -->
+<section class="py-20 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl md:text-5xl font-bold text-bogolan mb-4 animate-on-scroll">
+                Pourquoi choisir MANSA ?
+            </h2>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="text-center group animate-on-scroll">
+                <div class="w-20 h-20 bg-gradient-to-br from-bogolan to-bogolan-light rounded-full flex items-center justify-center mx-auto mb-6 transform group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-cut text-white text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">Coupe sur mesure</h3>
+                <p class="text-gray-600 text-lg">
+                    Nos ensembles sont taillés selon vos mensurations pour un ajustement parfait
+                </p>
+            </div>
+            
+            <div class="text-center group animate-on-scroll">
+                <div class="w-20 h-20 bg-gradient-to-br from-terre to-terre-light rounded-full flex items-center justify-center mx-auto mb-6 transform group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-leaf text-white text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">Matières premium</h3>
+                <p class="text-gray-600 text-lg">
+                    Bazin riche, wax authentique et tissus sélectionnés pour leur qualité exceptionnelle
+                </p>
+            </div>
+            
+            <div class="text-center group animate-on-scroll">
+                <div class="w-20 h-20 bg-gradient-to-br from-blue-600 to-blue-800 rounded-full flex items-center justify-center mx-auto mb-6 transform group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-handshake text-white text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">Satisfaction garantie</h3>
+                <p class="text-gray-600 text-lg">
+                    Retour gratuit sous 30 jours si vous n'êtes pas entièrement satisfait
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Newsletter Section -->
+<section class="py-20 bg-gradient-to-r from-bogolan to-terre text-white">
+    <div class="container mx-auto px-4 text-center">
+        <div class="max-w-2xl mx-auto animate-on-scroll">
+            <h2 class="text-4xl font-bold mb-6">Restez connecté</h2>
+            <p class="text-xl mb-8">Recevez nos dernières collections et offres exclusives</p>
+            
+            <form class="max-w-md mx-auto flex flex-col sm:flex-row gap-4">
+                <input type="email" placeholder="Votre adresse email" class="flex-1 px-6 py-4 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-terre">
+                <button type="submit" class="bg-white text-bogolan px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-all transform hover:scale-105">
+                    S'abonner
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- Styles CSS -->
+<style>
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.animate-fade-in-up-delay-1 {
+    animation: fadeInUp 0.8s ease-out 0.2s both;
+}
+
+.animate-fade-in-up-delay-2 {
+    animation: fadeInUp 0.8s ease-out 0.4s both;
+}
+
+.animate-fade-in-up-delay-3 {
+    animation: fadeInUp 0.8s ease-out 0.6s both;
+}
+
+.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease-out;
+}
+
+.animate-on-scroll.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Slider */
+.hero-slider {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+}
+
+.slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+.slide.active {
+    opacity: 1;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.dot.active {
+    background: white;
+}
+
+.slider-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    padding: 15px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s;
+}
+
+.slider-nav:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.slider-nav.prev {
+    left: 30px;
+}
+
+.slider-nav.next {
+    right: 30px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .slider-nav {
+        display: none;
+    }
+    
+    .hero-slider .slide h1 {
+        font-size: 3rem;
+    }
+    
+    .hero-slider .slide p {
+        font-size: 1.2rem;
+    }
+}
+</style>
+
+<!-- JavaScript -->
+<script>
+// Slider functionality
+let currentSlide = 0;
+const slides = document.querySelectorAll('.slide');
+const dots = document.querySelectorAll('.dot');
+
+function showSlide(index) {
+    slides.forEach((slide, i) => {
+        slide.classList.toggle('active', i === index);
+    });
+    dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === index);
+    });
+}
+
+function changeSlide(direction) {
+    currentSlide += direction;
+    if (currentSlide >= slides.length) currentSlide = 0;
+    if (currentSlide < 0) currentSlide = slides.length - 1;
+    showSlide(currentSlide);
+}
+
+// Dot navigation
+dots.forEach((dot, index) => {
+    dot.addEventListener('click', () => {
+        currentSlide = index;
+        showSlide(currentSlide);
+    });
+});
+
+// Auto-play slider
+setInterval(() => {
+    changeSlide(1);
+}, 5000);
+
+// Scroll animations
+function animateOnScroll() {
+    const elements = document.querySelectorAll('.animate-on-scroll');
+    elements.forEach(element => {
+        const elementTop = element.getBoundingClientRect().top;
+        const elementVisible = 150;
+        
+        if (elementTop < window.innerHeight - elementVisible) {
+            element.classList.add('visible');
+        }
+    });
+}
+
+window.addEventListener('scroll', animateOnScroll);
+document.addEventListener('DOMContentLoaded', animateOnScroll);
+
+// Add to cart function
+async function addToCart(productId) {
+    if (!<%= user ? 'true' : 'false' %>) {
+        window.location.href = '/connexion';
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/produit/${productId}/variants`);
+        const data = await response.json();
+        
+        if (data.success && data.variants.length > 0) {
+            const variant = data.variants[0];
+            
+            const cartResponse = await fetch('/api/panier/ajouter', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    variant_id: variant.id,
+                    quantite: 1
+                })
+            });
+            
+            const cartData = await cartResponse.json();
+            
+            if (cartData.success) {
+                showNotification('Produit ajouté au panier', 'success');
+                if (typeof loadCartCount === 'function') {
+                    loadCartCount();
+                }
+            } else {
+                showNotification(cartData.message || 'Erreur lors de l\'ajout au panier', 'error');
+            }
+        } else {
+            showNotification('Produit non disponible', 'error');
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+        showNotification('Erreur lors de l\'ajout au panier', 'error');
+    }
+}
+
+// Simple notification function
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg ${type === 'success' ? 'bg-green-500' : 'bg-red-500'} text-white`;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+</script>
+
+<%- include('partials/footer') %>

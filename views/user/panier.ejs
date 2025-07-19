@@ -1,0 +1,345 @@
+<%- include('partials/header', { title: title, user: user }) %>
+
+<section class="py-8 min-h-screen bg-gray-100">
+    <div class="container mx-auto px-4">
+        <!-- Breadcrumb -->
+        <nav class="flex mb-8" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                <li class="inline-flex items-center">
+                    <a href="/" class="text-gray-700 hover:text-bogolan">
+                        <i class="fas fa-home"></i>
+                    </a>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
+                        <span class="text-gray-500">Mon Panier</span>
+                    </div>
+                </li>
+            </ol>
+        </nav>
+
+        <div class="max-w-6xl mx-auto">
+            <h1 class="text-3xl font-bold text-bogolan mb-8">Mon Panier</h1>
+
+            <!-- Cart Content -->
+            <div id="cart-content" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Cart Items -->
+                <div class="lg:col-span-2">
+                    <div id="cart-items" class="space-y-4">
+                        <!-- Loading -->
+                        <div id="cart-loading" class="text-center py-8">
+                            <i class="fas fa-spinner fa-spin text-2xl text-bogolan"></i>
+                            <p class="text-gray-600 mt-2">Chargement du panier...</p>
+                        </div>
+
+                        <!-- Empty cart -->
+                        <div id="empty-cart" class="hidden text-center py-16">
+                            <i class="fas fa-shopping-cart text-6xl text-gray-400 mb-4"></i>
+                            <h3 class="text-xl font-semibold text-gray-600 mb-2">Votre panier est vide</h3>
+                            <p class="text-gray-500 mb-6">Découvrez nos magnifiques ensembles bazin et wax</p>
+                            <a href="/boutique" class="bg-bogolan text-white px-6 py-3 rounded-lg font-semibold hover:bg-bogolan-light transition-colors">
+                                Continuer mes achats
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cart Summary -->
+                <div class="lg:col-span-1">
+                    <div id="cart-summary" class="bg-white rounded-lg shadow-md p-6 sticky top-24">
+                        <h2 class="text-xl font-bold mb-4 text-bogolan">Résumé de la commande</h2>
+                        
+                        <div class="space-y-2 mb-4">
+                            <div class="flex justify-between">
+                                <span>Sous-total</span>
+                                <span id="subtotal">0,00 €</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Livraison</span>
+                                <span id="shipping">Gratuite</span>
+                            </div>
+                            <div class="border-t pt-2">
+                                <div class="flex justify-between font-bold text-lg">
+                                    <span>Total</span>
+                                    <span id="total">0,00 €</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <button id="checkout-btn" class="w-full bg-bogolan text-white py-3 px-4 rounded-lg font-semibold hover:bg-bogolan-light transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                                Passer la commande
+                            </button>
+                            
+                            <a href="/boutique" class="w-full block text-center bg-gray-200 text-gray-700 py-3 px-4 rounded-lg font-semibold hover:bg-gray-300 transition-colors">
+                                Continuer mes achats
+                            </a>
+                        </div>
+
+                        <!-- Promo code -->
+                        <div class="mt-6 border-t pt-4">
+                            <h3 class="font-semibold mb-2">Code promo</h3>
+                            <div class="flex">
+                                <input 
+                                    type="text" 
+                                    id="promo-code" 
+                                    placeholder="Entrez votre code"
+                                    class="flex-1 px-3 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-bogolan"
+                                >
+                                <button 
+                                    id="apply-promo" 
+                                    class="bg-terre text-white px-4 py-2 rounded-r-lg hover:bg-terre-light transition-colors"
+                                >
+                                    Appliquer
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+let cartData = { items: [], total: 0, nombre_articles: 0 };
+
+// Load cart on page load
+document.addEventListener('DOMContentLoaded', function() {
+    <% if (user) { %>
+        // Vérifier et transférer le panier temporaire
+        transferTempCart().then(() => {
+            loadCart();
+        });
+    <% } else { %>
+        showEmptyCart();
+    <% } %>
+});
+
+// Transférer le panier temporaire
+async function transferTempCart() {
+    const tempCart = localStorage.getItem('tempCart');
+    if (!tempCart) return;
+    
+    try {
+        const items = JSON.parse(tempCart);
+        if (items.length === 0) return;
+        
+        const response = await fetch('/api/panier/transferer-temp', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ tempCart: items })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success && data.transferred > 0) {
+            showNotification(data.message, 'success');
+        }
+        
+        // Supprimer le panier temporaire
+        localStorage.removeItem('tempCart');
+        
+    } catch (error) {
+        console.error('Erreur transfert panier temporaire:', error);
+    }
+}
+
+// Load cart function
+async function loadCart() {
+    try {
+        const response = await fetch('/api/panier');
+        const data = await response.json();
+        
+        if (data.success) {
+            cartData = data;
+            displayCart();
+        } else {
+            showEmptyCart();
+        }
+    } catch (error) {
+        console.error('Erreur chargement panier:', error);
+        showEmptyCart();
+    }
+}
+
+// Display cart items
+function displayCart() {
+    const cartItemsContainer = document.getElementById('cart-items');
+    const cartLoading = document.getElementById('cart-loading');
+    const emptyCart = document.getElementById('empty-cart');
+    
+    cartLoading.classList.add('hidden');
+    
+    if (cartData.items.length === 0) {
+        emptyCart.classList.remove('hidden');
+        return;
+    }
+    
+    emptyCart.classList.add('hidden');
+    
+    cartItemsContainer.innerHTML = cartData.items.map(item => `
+        <div class="bg-white rounded-lg shadow-md p-4 flex items-center space-x-4">
+            <div class="w-24 h-24 bg-gray-200 rounded-lg flex-shrink-0">
+                ${item.images ? `<img src="/uploads/products/${JSON.parse(item.images).principale}" alt="${item.nom}" class="w-full h-full object-cover rounded-lg">` : ''}
+            </div>
+            
+            <div class="flex-1">
+                <h3 class="font-semibold text-lg">${item.nom}</h3>
+                <p class="text-gray-600 text-sm">
+                    ${item.taille} - ${item.couleur}
+                </p>
+                <p class="text-bogolan font-bold">
+                    ${parseFloat(item.prix_vente).toFixed(2)} €
+                </p>
+            </div>
+            
+            <div class="flex items-center space-x-3">
+                <div class="flex items-center border rounded-lg">
+                    <button 
+                        onclick="updateQuantity(${item.variant_id}, ${item.quantite - 1})"
+                        class="px-3 py-1 text-gray-600 hover:text-bogolan"
+                        ${item.quantite <= 1 ? 'disabled' : ''}
+                    >
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <span class="px-3 py-1 min-w-[2rem] text-center">${item.quantite}</span>
+                    <button 
+                        onclick="updateQuantity(${item.variant_id}, ${item.quantite + 1})"
+                        class="px-3 py-1 text-gray-600 hover:text-bogolan"
+                        ${item.quantite >= item.stock_actuel ? 'disabled' : ''}
+                    >
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+                
+                <button 
+                    onclick="removeFromCart(${item.variant_id})"
+                    class="text-red-600 hover:text-red-800 p-2"
+                >
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+    `).join('');
+    
+    updateSummary();
+}
+
+// Update cart summary
+function updateSummary() {
+    document.getElementById('subtotal').textContent = `${cartData.total.toFixed(2)} €`;
+    document.getElementById('total').textContent = `${cartData.total.toFixed(2)} €`;
+    
+    // Update cart count in header
+    document.getElementById('cart-count').textContent = cartData.nombre_articles;
+    
+    // Enable/disable checkout button
+    const checkoutBtn = document.getElementById('checkout-btn');
+    checkoutBtn.disabled = cartData.items.length === 0;
+}
+
+// Update quantity
+async function updateQuantity(variantId, newQuantity) {
+    if (newQuantity <= 0) {
+        return removeFromCart(variantId);
+    }
+    
+    try {
+        const response = await fetch('/api/panier/modifier', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                variant_id: variantId,
+                quantite: newQuantity
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            loadCart(); // Reload cart
+        } else {
+            showNotification(data.message, 'error');
+        }
+    } catch (error) {
+        console.error('Erreur mise à jour quantité:', error);
+        showNotification('Erreur lors de la mise à jour', 'error');
+    }
+}
+
+// Remove from cart
+async function removeFromCart(variantId) {
+    try {
+        const response = await fetch('/api/panier/supprimer', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                variant_id: variantId
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            loadCart(); // Reload cart
+            showNotification('Article supprimé du panier', 'success');
+        } else {
+            showNotification(data.message, 'error');
+        }
+    } catch (error) {
+        console.error('Erreur suppression article:', error);
+        showNotification('Erreur lors de la suppression', 'error');
+    }
+}
+
+// Show empty cart
+function showEmptyCart() {
+    document.getElementById('cart-loading').classList.add('hidden');
+    document.getElementById('empty-cart').classList.remove('hidden');
+    document.getElementById('cart-summary').style.display = 'none';
+}
+
+// Apply promo code
+document.getElementById('apply-promo').addEventListener('click', function() {
+    const promoCode = document.getElementById('promo-code').value;
+    if (promoCode) {
+        showNotification('Fonctionnalité des codes promo bientôt disponible', 'info');
+    }
+});
+
+// Checkout button
+document.getElementById('checkout-btn').addEventListener('click', function() {
+    if (cartData.items.length === 0) return;
+    
+    // Redirect to checkout
+    window.location.href = '/commande';
+});
+
+// Simple notification function
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    const colors = {
+        success: 'bg-green-500',
+        error: 'bg-red-500',
+        info: 'bg-blue-500'
+    };
+    
+    notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg ${colors[type]} text-white`;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+</script>
+
+<%- include('partials/footer') %>

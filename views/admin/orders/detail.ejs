@@ -1,0 +1,156 @@
+<%- include('../partials/header', { 
+    
+}) %>
+   
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Header -->
+            <header class="bg-white shadow-sm border-b">
+                <div class="flex items-center justify-between px-6 py-4">
+                    <h2 class="text-xl font-semibold text-gray-800">Commande #<%= order.numero_commande %></h2>
+                    <a href="/orders" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        Retour
+                    </a>
+                </div>
+            </header>
+
+            <!-- Main Content Area -->
+            <main class="flex-1 overflow-y-auto p-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Order Details -->
+                    <div class="lg:col-span-2 space-y-6">
+                        <!-- Items -->
+                        <div class="bg-white shadow rounded-lg p-6">
+                            <h3 class="text-lg font-semibold mb-4">Articles commandés</h3>
+                            <div class="space-y-3">
+                                <% if (items && items.length > 0) { %>
+                                    <% items.forEach(item => { %>
+                                        <div class="flex justify-between items-center p-3 bg-gray-50 rounded">
+                                            <div>
+                                                <div class="font-medium"><%= item.nom_produit || 'Produit supprimé' %></div>
+                                                <div class="text-sm text-gray-600">
+                                                    SKU: <%= item.sku %> - <%= item.taille %> - <%= item.couleur %>
+                                                </div>
+                                                <div class="text-sm text-gray-600">
+                                                    Quantité: <%= item.quantite %>
+                                                </div>
+                                            </div>
+                                            <div class="text-right">
+                                                <div class="font-medium"><%= item.prix_total %>€</div>
+                                                <div class="text-sm text-gray-600"><%= item.prix_unitaire %>€/unité</div>
+                                            </div>
+                                        </div>
+                                    <% }) %>
+                                <% } else { %>
+                                    <p class="text-gray-500">Aucun article trouvé</p>
+                                <% } %>
+                            </div>
+                        </div>
+
+                        <!-- Status Update -->
+                        <div class="bg-white shadow rounded-lg p-6">
+                            <h3 class="text-lg font-semibold mb-4">Mettre à jour le statut</h3>
+                            <form action="/orders/<%= order.id %>/status" method="POST" class="space-y-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="statut" class="block text-sm font-medium text-gray-700">Statut</label>
+                                        <select name="statut" id="statut" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                            <option value="en_attente" <%= order.statut === 'en_attente' ? 'selected' : '' %>>En attente</option>
+                                            <option value="confirmee" <%= order.statut === 'confirmee' ? 'selected' : '' %>>Confirmée</option>
+                                            <option value="preparee" <%= order.statut === 'preparee' ? 'selected' : '' %>>Préparée</option>
+                                            <option value="expediee" <%= order.statut === 'expediee' ? 'selected' : '' %>>Expédiée</option>
+                                            <option value="livree" <%= order.statut === 'livree' ? 'selected' : '' %>>Livrée</option>
+                                            <option value="annulee" <%= order.statut === 'annulee' ? 'selected' : '' %>>Annulée</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="numero_suivi" class="block text-sm font-medium text-gray-700">Numéro de suivi</label>
+                                        <input type="text" name="numero_suivi" id="numero_suivi" value="<%= order.numero_suivi || '' %>"
+                                               class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="notes_admin" class="block text-sm font-medium text-gray-700">Notes admin</label>
+                                    <textarea name="notes_admin" id="notes_admin" rows="3"
+                                              class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"><%= order.notes_admin || '' %></textarea>
+                                </div>
+                                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                                    Mettre à jour
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Order Summary -->
+                    <div class="space-y-6">
+                        <!-- Customer Info -->
+                        <div class="bg-white shadow rounded-lg p-6">
+                            <h3 class="text-lg font-semibold mb-4">Informations client</h3>
+                            <div class="space-y-2">
+                                <div><strong>Nom:</strong> <%= order.prenom %> <%= order.nom %></div>
+                                <div><strong>Email:</strong> <%= order.email %></div>
+                                <% if (order.telephone) { %>
+                                    <div><strong>Téléphone:</strong> <%= order.telephone %></div>
+                                <% } %>
+                            </div>
+                        </div>
+
+                        <!-- Order Summary -->
+                        <div class="bg-white shadow rounded-lg p-6">
+                            <h3 class="text-lg font-semibold mb-4">Résumé</h3>
+                            <div class="space-y-2">
+                                <div class="flex justify-between">
+                                    <span>Sous-total:</span>
+                                    <span><%= order.sous_total %>€</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Frais de livraison:</span>
+                                    <span><%= order.frais_livraison || 0 %>€</span>
+                                </div>
+                                <% if (order.remise > 0) { %>
+                                    <div class="flex justify-between">
+                                        <span>Remise:</span>
+                                        <span>-<%= order.remise %>€</span>
+                                    </div>
+                                <% } %>
+                                <div class="border-t pt-2 flex justify-between font-bold">
+                                    <span>Total:</span>
+                                    <span><%= order.total %>€</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Order Status -->
+                        <div class="bg-white shadow rounded-lg p-6">
+                            <h3 class="text-lg font-semibold mb-4">Statut de la commande</h3>
+                            <div class="space-y-2">
+                                <div><strong>Statut:</strong> 
+                                    <span class="px-2 py-1 text-xs font-medium rounded-full
+                                        <%= order.statut === 'en_attente' ? 'bg-yellow-100 text-yellow-800' :
+                                            order.statut === 'confirmee' ? 'bg-blue-100 text-blue-800' :
+                                            order.statut === 'preparee' ? 'bg-purple-100 text-purple-800' :
+                                            order.statut === 'expediee' ? 'bg-green-100 text-green-800' :
+                                            order.statut === 'livree' ? 'bg-green-100 text-green-800' :
+                                            order.statut === 'annulee' ? 'bg-red-100 text-red-800' :
+                                            'bg-gray-100 text-gray-800' %>">
+                                        <%= order.statut %>
+                                    </span>
+                                </div>
+                                <div><strong>Date:</strong> <%= new Date(order.created_at).toLocaleDateString('fr-FR') %></div>
+                                <% if (order.numero_suivi) { %>
+                                    <div><strong>Numéro de suivi:</strong> <%= order.numero_suivi %></div>
+                                <% } %>
+                                <% if (order.date_expedition) { %>
+                                    <div><strong>Date d'expédition:</strong> <%= new Date(order.date_expedition).toLocaleDateString('fr-FR') %></div>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

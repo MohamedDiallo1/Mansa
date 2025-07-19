@@ -1,0 +1,241 @@
+<%- include('../partials/header', { 
+    title: 'Modifier ' + product.nom,
+    currentPage: 'products',
+    pageTitle: 'Modifier le produit',
+    pageSubtitle: product.nom,
+    headerActions: '<a href="/products" class="btn-secondary px-4 py-2 rounded-lg"><i class="fas fa-arrow-left mr-2"></i>Retour</a>'
+}) %>
+
+                <div class="bg-white shadow rounded-lg p-6">
+                    <form action="/products/<%= product.id %>/edit" method="POST" enctype="multipart/form-data" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Nom du produit -->
+                            <div>
+                                <label for="nom" class="block text-sm font-medium text-gray-700">
+                                    Nom du produit *
+                                </label>
+                                <input type="text" name="nom" id="nom" required value="<%= product.nom %>"
+                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+
+                            <!-- Matière -->
+                            <div>
+                                <label for="matiere" class="block text-sm font-medium text-gray-700">
+                                    Matière *
+                                </label>
+                                <select name="matiere" id="matiere" required
+                                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">Sélectionner une matière</option>
+                                    <option value="bazin" <%= product.matiere === 'bazin' ? 'selected' : '' %>>Bazin</option>
+                                    <option value="wax" <%= product.matiere === 'wax' ? 'selected' : '' %>>Wax</option>
+                                    <option value="tissu" <%= product.matiere === 'tissu' ? 'selected' : '' %>>Tissu</option>
+                                </select>
+                            </div>
+
+                            <!-- Type -->
+                            <div>
+                                <label for="type" class="block text-sm font-medium text-gray-700">
+                                    Type *
+                                </label>
+                                <select name="type" id="type" required
+                                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">Sélectionner un type</option>
+                                    <option value="2-pieces" <%= product.type === '2-pieces' ? 'selected' : '' %>>2 pièces</option>
+                                    <option value="3-pieces" <%= product.type === '3-pieces' ? 'selected' : '' %>>3 pièces</option>
+                                </select>
+                            </div>
+
+                            <!-- Catégorie -->
+                            <div>
+                                <label for="categorie" class="block text-sm font-medium text-gray-700">
+                                    Catégorie
+                                </label>
+                                <select name="categorie" id="categorie"
+                                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">Sélectionner une catégorie</option>
+                                    <option value="ceremonie" <%= product.categorie === 'ceremonie' ? 'selected' : '' %>>Cérémonie</option>
+                                    <option value="casual" <%= product.categorie === 'casual' ? 'selected' : '' %>>Casual</option>
+                                    <option value="business" <%= product.categorie === 'business' ? 'selected' : '' %>>Business</option>
+                                </select>
+                            </div>
+
+                            <!-- Prix d'achat -->
+                            <div>
+                                <label for="prix_achat" class="block text-sm font-medium text-gray-700">
+                                    Prix d'achat (€)
+                                </label>
+                                <input type="number" name="prix_achat" id="prix_achat" step="0.01" value="<%= product.prix_achat || '' %>"
+                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+
+                            <!-- Prix de vente -->
+                            <div>
+                                <label for="prix_vente" class="block text-sm font-medium text-gray-700">
+                                    Prix de vente (€) *
+                                </label>
+                                <input type="number" name="prix_vente" id="prix_vente" step="0.01" required value="<%= product.prix_vente %>"
+                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+
+                            <!-- Prix promo -->
+                            <div>
+                                <label for="prix_promo" class="block text-sm font-medium text-gray-700">
+                                    Prix promo (€)
+                                </label>
+                                <input type="number" name="prix_promo" id="prix_promo" step="0.01" value="<%= product.prix_promo || '' %>"
+                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+
+                            <!-- Statut -->
+                            <div>
+                                <label for="statut" class="block text-sm font-medium text-gray-700">
+                                    Statut
+                                </label>
+                                <select name="statut" id="statut"
+                                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="brouillon" <%= product.statut === 'brouillon' ? 'selected' : '' %>>Brouillon</option>
+                                    <option value="actif" <%= product.statut === 'actif' ? 'selected' : '' %>>Actif</option>
+                                    <option value="rupture" <%= product.statut === 'rupture' ? 'selected' : '' %>>Rupture</option>
+                                    <option value="archive" <%= product.statut === 'archive' ? 'selected' : '' %>>Archivé</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Description courte -->
+                        <div>
+                            <label for="description_courte" class="block text-sm font-medium text-gray-700">
+                                Description courte
+                            </label>
+                            <textarea name="description_courte" id="description_courte" rows="3"
+                                      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"><%= product.description_courte || '' %></textarea>
+                        </div>
+
+                        <!-- Description longue -->
+                        <div>
+                            <label for="description_longue" class="block text-sm font-medium text-gray-700">
+                                Description détaillée
+                            </label>
+                            <textarea name="description_longue" id="description_longue" rows="6"
+                                      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-bogolan-500 focus:border-bogolan-500"><%= product.description_longue || '' %></textarea>
+                        </div>
+
+                        <!-- Images actuelles -->
+                        <% 
+                        let currentImages = { principale: null, galerie: [] };
+                        if (product.images) {
+                            try {
+                                currentImages = JSON.parse(product.images);
+                            } catch (e) {}
+                        }
+                        %>
+                        <% if (currentImages.principale || (currentImages.galerie && currentImages.galerie.length > 0)) { %>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">
+                                Images actuelles
+                            </label>
+                            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                                <% if (currentImages.principale) { %>
+                                    <div class="relative group">
+                                        <img src="/uploads/products/<%= currentImages.principale %>" 
+                                             class="w-full h-24 object-cover rounded-lg border-2 border-bogolan-200"
+                                             alt="Image principale">
+                                        <div class="absolute top-1 right-1 bg-bogolan-600 text-white text-xs px-2 py-1 rounded">
+                                            Principal
+                                        </div>
+                                    </div>
+                                <% } %>
+                                <% if (currentImages.galerie && currentImages.galerie.length > 0) { %>
+                                    <% currentImages.galerie.forEach(img => { %>
+                                        <div class="relative group">
+                                            <img src="/uploads/products/<%= img %>" 
+                                                 class="w-full h-24 object-cover rounded-lg border-2 border-terre-200"
+                                                 alt="Image galerie">
+                                            <div class="absolute top-1 right-1 bg-terre-600 text-white text-xs px-2 py-1 rounded">
+                                                Galerie
+                                            </div>
+                                        </div>
+                                    <% }) %>
+                                <% } %>
+                            </div>
+                        </div>
+                        <% } %>
+
+                        <!-- Nouvelles images -->
+                        <div>
+                            <label for="images" class="block text-sm font-medium text-gray-700">
+                                Nouvelles images (optionnel)
+                            </label>
+                            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:border-bogolan-400 transition-colors">
+                                <div class="space-y-1 text-center">
+                                    <i class="fas fa-cloud-upload-alt text-4xl text-gray-400"></i>
+                                    <div class="flex text-sm text-gray-600">
+                                        <label for="images" class="relative cursor-pointer bg-white rounded-md font-medium text-bogolan-600 hover:text-bogolan-500">
+                                            <span>Remplacer les images</span>
+                                            <input id="images" name="images" type="file" class="sr-only" multiple accept="image/*" onchange="previewImages(event)">
+                                        </label>
+                                    </div>
+                                    <p class="text-xs text-gray-500">
+                                        PNG, JPG, GIF jusqu'à 5MB (5 images max)
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- Preview des nouvelles images -->
+                            <div id="imagePreview" class="mt-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 hidden">
+                            </div>
+                            <div class="mt-2">
+                                <label class="flex items-center">
+                                    <input type="checkbox" name="keep_images" value="1" checked class="rounded border-gray-300 text-bogolan-600 focus:ring-bogolan-500">
+                                    <span class="ml-2 text-sm text-gray-700">Conserver les images existantes en plus des nouvelles</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="flex justify-end space-x-3">
+                            <a href="/products" class="bg-terre-300 text-terre-700 px-4 py-2 rounded-lg hover:bg-terre-400 transition-colors">
+                                Annuler
+                            </a>
+                            <button type="submit" class="btn-primary px-4 py-2 rounded-lg transition-colors">
+                                <i class="fas fa-save mr-2"></i>
+                                Mettre à jour
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+<script>
+function previewImages(event) {
+    const preview = document.getElementById('imagePreview');
+    const files = event.target.files;
+    
+    // Vider le preview
+    preview.innerHTML = '';
+    
+    if (files.length > 0) {
+        preview.classList.remove('hidden');
+        
+        for (let i = 0; i < Math.min(files.length, 5); i++) {
+            const file = files[i];
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const div = document.createElement('div');
+                div.className = 'relative group';
+                div.innerHTML = `
+                    <img src="${e.target.result}" class="w-full h-24 object-cover rounded-lg border-2 border-bogolan-200">
+                    <div class="absolute top-1 right-1 bg-bogolan-600 text-white text-xs px-2 py-1 rounded">
+                        ${i === 0 ? 'Principal' : 'Galerie'}
+                    </div>
+                `;
+                preview.appendChild(div);
+            };
+            
+            reader.readAsDataURL(file);
+        }
+    } else {
+        preview.classList.add('hidden');
+    }
+}
+</script>
+
+<%- include('../partials/footer') %>

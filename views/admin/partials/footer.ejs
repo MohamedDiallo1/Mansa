@@ -1,0 +1,252 @@
+            </main>
+            </div>
+            </div>
+
+<!-- Script pour notifications en temps réel -->
+<script src="/socket.io/socket.io.js"></script>
+<script>
+let notifications = [];
+let socket;
+
+// Initialiser Socket.IO pour l'admin
+if (window.location.pathname.includes('/dashboard') || 
+    window.location.pathname.includes('/orders') || 
+    window.location.pathname.includes('/products') || 
+    window.location.pathname.includes('/customers') || 
+    window.location.pathname.includes('/reviews') || 
+    window.location.pathname.includes('/analytics')) {
+    
+    socket = io();
+    socket.emit('join-admin');
+    
+    // Écouter les nouvelles commandes
+    socket.on('new-order', (orderData) => {
+        showNotification({
+            id: Date.now(),
+            type: 'new-order',
+            title: 'Nouvelle commande',
+            message: `Commande #${orderData.numero_commande} de ${orderData.client}`,
+            timestamp: new Date(),
+            data: orderData
+        });
+        playNotificationSound();
+    });
+    
+    // Écouter les mises à jour de commandes
+    socket.on('order-updated', (orderData) => {
+        showNotification({
+            id: Date.now(),
+            type: 'order-update',
+            title: 'Commande mise à jour',
+            message: `Commande #${orderData.numero_commande} : ${orderData.statut}`,
+            timestamp: new Date(),
+            data: orderData
+        });
+    });
+    
+    // Écouter les alertes de stock
+    socket.on('low-stock', (productData) => {
+        showNotification({
+            id: Date.now(),
+            type: 'low-stock',
+            title: 'Stock faible',
+            message: `${productData.nom} (${productData.variant}) : ${productData.stock} restant`,
+            timestamp: new Date(),
+            data: productData
+        });
+    });
+}
+
+// Gestion des notifications
+function showNotification(notification) {
+    notifications.unshift(notification);
+    updateNotificationBadge();
+    updateNotificationsList();
+    
+    // Toast notification temporaire
+    showToastNotification(notification);
+}
+
+function updateNotificationBadge() {
+    const badge = document.getElementById('notification-badge');
+    const icon = document.getElementById('notification-icon');
+    
+    if (badge && notifications.length > 0) {
+        badge.textContent = notifications.length;
+        badge.classList.remove('hidden');
+        
+        // Animation de l'icône
+        if (icon) {
+            icon.classList.add('animate-bounce');
+            setTimeout(() => {
+                icon.classList.remove('animate-bounce');
+            }, 2000);
+        }
+    } else if (badge) {
+        badge.classList.add('hidden');
+    }
+}
+
+function updateNotificationsList() {
+    const list = document.getElementById('notifications-list');
+    if (!list) return;
+    
+    if (notifications.length === 0) {
+        list.innerHTML = `
+            <div class="p-4 text-center text-gray-500">
+                <i class="fas fa-bell-slash text-2xl mb-2"></i>
+                <p>Aucune notification</p>
+            </div>
+        `;
+        return;
+    }
+    
+    list.innerHTML = notifications.map(notif => `
+        <div class="p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer" onclick="handleNotificationClick('${notif.id}', '${notif.type}')">
+            <div class="flex items-start space-x-3">
+                <div class="flex-shrink-0">
+                    <i class="fas ${getNotificationIcon(notif.type)} text-lg ${getNotificationColor(notif.type)}"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-900">${notif.title}</p>
+                    <p class="text-sm text-gray-500">${notif.message}</p>
+                    <p class="text-xs text-gray-400 mt-1">${formatTime(notif.timestamp)}</p>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function getNotificationIcon(type) {
+    switch(type) {
+        case 'new-order': return 'fa-shopping-cart';
+        case 'order-update': return 'fa-sync-alt';
+        case 'low-stock': return 'fa-exclamation-triangle';
+        default: return 'fa-bell';
+    }
+}
+
+function getNotificationColor(type) {
+    switch(type) {
+        case 'new-order': return 'text-green-600';
+        case 'order-update': return 'text-blue-600';
+        case 'low-stock': return 'text-red-600';
+        default: return 'text-gray-600';
+    }
+}
+
+function formatTime(timestamp) {
+    const now = new Date();
+    const diff = now - timestamp;
+    const minutes = Math.floor(diff / 60000);
+    
+    if (minutes < 1) return 'À l\'instant';
+    if (minutes < 60) return `Il y a ${minutes} min`;
+    
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `Il y a ${hours}h`;
+    
+    return timestamp.toLocaleDateString('fr-FR');
+}
+
+function handleNotificationClick(id, type) {
+    // Rediriger selon le type de notification
+    switch(type) {
+        case 'new-order':
+        case 'order-update':
+            window.location.href = `/orders`;
+            break;
+        case 'low-stock':
+            window.location.href = `/products`;
+            break;
+    }
+    
+    // Marquer comme lue
+    markNotificationAsRead(id);
+}
+
+function markNotificationAsRead(id) {
+    notifications = notifications.filter(n => n.id != id);
+    updateNotificationBadge();
+    updateNotificationsList();
+}
+
+function clearAllNotifications() {
+    notifications = [];
+    updateNotificationBadge();
+    updateNotificationsList();
+    toggleNotificationsDropdown();
+}
+
+function showToastNotification(notification) {
+    const toast = document.createElement('div');
+    toast.className = 'fixed top-4 right-4 z-50 bg-white border border-gray-200 rounded-lg shadow-lg p-4 w-80 transform transition-transform duration-300 translate-x-full';
+    toast.innerHTML = `
+        <div class="flex items-start space-x-3">
+            <div class="flex-shrink-0">
+                <i class="fas ${getNotificationIcon(notification.type)} text-lg ${getNotificationColor(notification.type)}"></i>
+            </div>
+            <div class="flex-1">
+                <p class="text-sm font-medium text-gray-900">${notification.title}</p>
+                <p class="text-sm text-gray-600">${notification.message}</p>
+            </div>
+            <button onclick="this.parentElement.parentElement.remove()" class="text-gray-400 hover:text-gray-600">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    // Animation d'entrée
+    setTimeout(() => {
+        toast.classList.remove('translate-x-full');
+    }, 100);
+    
+    // Suppression automatique après 5 secondes
+    setTimeout(() => {
+        toast.classList.add('translate-x-full');
+        setTimeout(() => toast.remove(), 300);
+    }, 5000);
+}
+
+function playNotificationSound() {
+    try {
+        const audio = new Audio('/sounds/notification1.mp3');
+        audio.volume = 0.5;
+        audio.play().catch(e => console.log('Erreur audio:', e));
+    } catch (error) {
+        console.log('Audio non disponible:', error);
+    }
+}
+
+function toggleNotificationsDropdown() {
+    const dropdown = document.getElementById('notifications-dropdown');
+    if (dropdown) {
+        dropdown.classList.toggle('hidden');
+    }
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    const notifBtn = document.getElementById('notifications-btn');
+    if (notifBtn) {
+        notifBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            toggleNotificationsDropdown();
+        });
+    }
+    
+    // Fermer le dropdown en cliquant ailleurs
+    document.addEventListener('click', function(e) {
+        const dropdown = document.getElementById('notifications-dropdown');
+        const btn = document.getElementById('notifications-btn');
+        if (dropdown && !dropdown.contains(e.target) && !btn.contains(e.target)) {
+            dropdown.classList.add('hidden');
+        }
+    });
+});
+</script>
+
+</body>
+</html>

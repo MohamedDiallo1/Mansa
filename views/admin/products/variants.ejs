@@ -1,0 +1,204 @@
+<%- include('../partials/header', { 
+    title: 'Variants - ' + product.nom,
+    currentPage: 'products',
+    pageTitle: 'Variants de ' + product.nom,
+    pageSubtitle: product.matiere + ' - ' + product.type,
+    headerActions: '<a href="/products" class="btn-secondary px-4 py-2 rounded-lg"><i class="fas fa-arrow-left mr-2"></i>Retour aux produits</a>'
+}) %>
+                <!-- Add Variant Form -->
+                <div class="bg-white shadow-lg rounded-lg p-6 mb-6 border border-bogolan-100">
+                    <div class="flex items-center mb-6">
+                        <div class="bg-bogolan-100 rounded-full p-3 mr-4">
+                            <i class="fas fa-plus text-bogolan-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-terre-900">Ajouter un variant</h3>
+                            <p class="text-sm text-terre-600">Créez une nouvelle variante pour ce produit</p>
+                        </div>
+                    </div>
+                    
+                    <form action="/products/<%= product.id %>/variants" method="POST" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label for="taille" class="block text-sm font-medium text-terre-700 mb-2">
+                                <i class="fas fa-ruler text-bogolan-600 mr-2"></i>
+                                Taille *
+                            </label>
+                            <select name="taille" id="taille" required
+                                    class="w-full border border-terre-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-bogolan-500 focus:border-bogolan-500 transition-colors">
+                                <option value="">Sélectionner</option>
+                                <option value="M">M</option>
+                                <option value="L">L</option>
+                                <option value="XL">XL</option>
+                                <option value="XXL">XXL</option>
+                                <option value="XXXL">XXXL</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="couleur" class="block text-sm font-medium text-terre-700 mb-2">
+                                <i class="fas fa-palette text-bogolan-600 mr-2"></i>
+                                Couleur *
+                            </label>
+                            <input type="text" name="couleur" id="couleur" required
+                                   class="w-full border border-terre-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-bogolan-500 focus:border-bogolan-500 transition-colors"
+                                   placeholder="ex: blanc, bleu-royal">
+                        </div>
+
+                        <div>
+                            <label for="couleur_hex" class="block text-sm font-medium text-terre-700 mb-2">
+                                <i class="fas fa-eye-dropper text-bogolan-600 mr-2"></i>
+                                Code couleur
+                            </label>
+                            <input type="color" name="couleur_hex" id="couleur_hex"
+                                   class="w-full h-10 border border-terre-300 rounded-lg focus:ring-2 focus:ring-bogolan-500 focus:border-bogolan-500 transition-colors">
+                        </div>
+
+                        <div>
+                            <label for="stock_actuel" class="block text-sm font-medium text-terre-700 mb-2">
+                                <i class="fas fa-cubes text-bogolan-600 mr-2"></i>
+                                Stock initial
+                            </label>
+                            <input type="number" name="stock_actuel" id="stock_actuel" min="0" value="0"
+                                   class="w-full border border-terre-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-bogolan-500 focus:border-bogolan-500 transition-colors">
+                        </div>
+
+                        <div>
+                            <label for="cout_unitaire" class="block text-sm font-medium text-terre-700 mb-2">
+                                <i class="fas fa-euro-sign text-bogolan-600 mr-2"></i>
+                                Coût unitaire (€)
+                            </label>
+                            <input type="number" name="cout_unitaire" id="cout_unitaire" step="0.01"
+                                   class="w-full border border-terre-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-bogolan-500 focus:border-bogolan-500 transition-colors">
+                        </div>
+
+                        <div>
+                            <label for="emplacement_stock" class="block text-sm font-medium text-terre-700 mb-2">
+                                <i class="fas fa-map-marker-alt text-bogolan-600 mr-2"></i>
+                                Emplacement
+                            </label>
+                            <input type="text" name="emplacement_stock" id="emplacement_stock"
+                                   class="w-full border border-terre-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-bogolan-500 focus:border-bogolan-500 transition-colors"
+                                   placeholder="ex: Etagère A-2">
+                        </div>
+
+                        <div class="md:col-span-3 pt-4">
+                            <button type="submit" class="btn-primary px-6 py-3 rounded-lg transition-colors">
+                                <i class="fas fa-plus mr-2"></i>
+                                Ajouter le variant
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Variants List -->
+                <div class="bg-white shadow-lg rounded-lg overflow-hidden border border-bogolan-100">
+                    <div class="bg-bogolan-50 px-6 py-4 border-b border-bogolan-200">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="bg-terre-100 rounded-full p-2 mr-3">
+                                    <i class="fas fa-layer-group text-terre-600"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-terre-900">Variants existants</h3>
+                                    <p class="text-sm text-terre-600"><%= variants.length %> variant(s) configuré(s)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <table class="min-w-full divide-y divide-bogolan-200">
+                        <thead class="bg-bogolan-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-terre-700 uppercase tracking-wider">
+                                    SKU
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-terre-700 uppercase tracking-wider">
+                                    Taille
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-terre-700 uppercase tracking-wider">
+                                    Couleur
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-terre-700 uppercase tracking-wider">
+                                    Stock
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-terre-700 uppercase tracking-wider">
+                                    Coût
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-terre-700 uppercase tracking-wider">
+                                    Emplacement
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-terre-700 uppercase tracking-wider">
+                                    Statut
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-bogolan-100">
+                            <% if (variants.length > 0) { %>
+                                <% variants.forEach(variant => { %>
+                                    <tr class="hover:bg-bogolan-25 transition-colors">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-bogolan-100 text-bogolan-800">
+                                                <%= variant.sku %>
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="inline-flex items-center px-2 py-1 rounded-md text-sm font-medium bg-terre-100 text-terre-800">
+                                                <%= variant.taille %>
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <% if (variant.couleur_hex) { %>
+                                                    <div class="w-5 h-5 rounded-full mr-3 border-2 border-terre-200" style="background-color: <%= variant.couleur_hex %>"></div>
+                                                <% } %>
+                                                <span class="text-sm font-medium text-terre-900"><%= variant.couleur %></span>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <span class="text-lg font-bold <%= variant.stock_actuel <= variant.stock_minimum ? 'text-red-600' : 'text-terre-900' %>">
+                                                    <%= variant.stock_actuel %>
+                                                </span>
+                                                <% if (variant.stock_actuel <= variant.stock_minimum) { %>
+                                                    <i class="fas fa-exclamation-triangle text-red-500 ml-2"></i>
+                                                <% } %>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-terre-700">
+                                            <%= variant.cout_unitaire ? variant.cout_unitaire + '€' : '-' %>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-terre-700">
+                                            <% if (variant.emplacement_stock) { %>
+                                                <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-terre-100 text-terre-800">
+                                                    <i class="fas fa-map-marker-alt mr-1"></i>
+                                                    <%= variant.emplacement_stock %>
+                                                </span>
+                                            <% } else { %>
+                                                <span class="text-terre-400">-</span>
+                                            <% } %>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 py-1 text-xs font-medium rounded-full
+                                                <%= variant.disponible ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+                                                <i class="fas <%= variant.disponible ? 'fa-check' : 'fa-times' %> mr-1"></i>
+                                                <%= variant.disponible ? 'Disponible' : 'Indisponible' %>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="7" class="px-6 py-8 text-center">
+                                        <div class="text-terre-500">
+                                            <i class="fas fa-layer-group text-4xl mb-4"></i>
+                                            <p class="text-lg font-medium">Aucun variant configuré</p>
+                                            <p class="text-sm">Ajoutez le premier variant avec le formulaire ci-dessus</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+
+<%- include('../partials/footer') %>

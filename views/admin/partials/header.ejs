@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= typeof title !== 'undefined' ? title + ' - ' : '' %>Admin Mansa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bogolan: {
+                            50: '#fef7ed',
+                            100: '#fef3e2',
+                            200: '#fce4c4',
+                            300: '#f9d09b',
+                            400: '#f4b370',
+                            500: '#ef9550',
+                            600: '#e17a2f',
+                            700: '#bc5f25',
+                            800: '#964c25',
+                            900: '#7a4022',
+                            950: '#421f0f'
+                        },
+                        terre: {
+                            50: '#f7f3f0',
+                            100: '#ede4dc',
+                            200: '#dcc9b8',
+                            300: '#c6a68f',
+                            400: '#b08568',
+                            500: '#9d6f4e',
+                            600: '#8b5d42',
+                            700: '#734c38',
+                            800: '#5e3f32',
+                            900: '#4e352b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .sidebar-active { @apply bg-bogolan-600 text-white; }
+        .btn-primary { @apply bg-bogolan-600 hover:bg-bogolan-700 text-white; }
+        .btn-secondary { @apply bg-terre-600 hover:bg-terre-700 text-white; }
+    </style>
+</head>
+<body class="bg-bogolan-50">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="w-64 bg-terre-800 text-white flex-shrink-0">
+            <div class="p-4 border-b border-terre-700">
+                <h1 class="text-xl font-bold text-bogolan-200">Admin Mansa</h1>
+                <p class="text-sm text-terre-300">Prêt-à-porter masculin</p>
+            </div>
+            <nav class="mt-4">
+                <a href="/dashboard" class="flex items-center px-4 py-3 hover:bg-terre-700 <%= typeof currentPage !== 'undefined' && currentPage === 'dashboard' ? 'bg-bogolan-600' : '' %> transition-colors">
+                    <i class="fas fa-tachometer-alt mr-3 text-bogolan-300"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/products" class="flex items-center px-4 py-3 hover:bg-terre-700 <%= typeof currentPage !== 'undefined' && currentPage === 'products' ? 'bg-bogolan-600' : '' %> transition-colors">
+                    <i class="fas fa-box mr-3 text-bogolan-300"></i>
+                    <span>Produits</span>
+                </a>
+                <a href="/products/stock" class="flex items-center px-4 py-3 hover:bg-terre-700 <%= typeof currentPage !== 'undefined' && currentPage === 'stock' ? 'bg-bogolan-600' : '' %> transition-colors">
+                    <i class="fas fa-warehouse mr-3 text-bogolan-300"></i>
+                    <span>Stocks</span>
+                </a>
+                <a href="/orders" class="flex items-center px-4 py-3 hover:bg-terre-700 <%= typeof currentPage !== 'undefined' && currentPage === 'orders' ? 'bg-bogolan-600' : '' %> transition-colors">
+                    <i class="fas fa-shopping-cart mr-3 text-bogolan-300"></i>
+                    <span>Commandes</span>
+                </a>
+                <a href="/customers" class="flex items-center px-4 py-3 hover:bg-terre-700 <%= typeof currentPage !== 'undefined' && currentPage === 'customers' ? 'bg-bogolan-600' : '' %> transition-colors">
+                    <i class="fas fa-users mr-3 text-bogolan-300"></i>
+                    <span>Clients</span>
+                </a>
+                <a href="/reviews" class="flex items-center px-4 py-3 hover:bg-terre-700 <%= typeof currentPage !== 'undefined' && currentPage === 'reviews' ? 'bg-bogolan-600' : '' %> transition-colors">
+                    <i class="fas fa-star mr-3 text-bogolan-300"></i>
+                    <span>Avis</span>
+                </a>
+                <a href="/analytics/dashboard" class="flex items-center px-4 py-3 hover:bg-terre-700 <%= typeof currentPage !== 'undefined' && currentPage === 'analytics' ? 'bg-bogolan-600' : '' %> transition-colors">
+                    <i class="fas fa-chart-line mr-3 text-bogolan-300"></i>
+                    <span>Analytics</span>
+                </a>
+                <div class="border-t border-terre-700 mt-4 pt-4">
+                    <a href="/logout" class="flex items-center px-4 py-3 hover:bg-red-700 text-red-300 transition-colors">
+                        <i class="fas fa-sign-out-alt mr-3"></i>
+                        <span>Déconnexion</span>
+                    </a>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Header -->
+            <header class="bg-white shadow-sm border-b border-bogolan-200">
+                <div class="flex items-center justify-between px-6 py-4">
+                    <div>
+                        <h2 class="text-xl font-semibold text-terre-800">
+                            <%= typeof pageTitle !== 'undefined' ? pageTitle : 'Administration' %>
+                        </h2>
+                        <% if (typeof pageSubtitle !== 'undefined' && pageSubtitle) { %>
+                            <p class="text-sm text-terre-600"><%= pageSubtitle %></p>
+                        <% } %>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <!-- Notifications -->
+                        <div class="relative">
+                            <button id="notifications-btn" class="relative p-2 text-gray-600 hover:text-bogolan-600 focus:outline-none focus:text-bogolan-600 transition-colors">
+                                <i id="notification-icon" class="fas fa-bell text-xl"></i>
+                                <span id="notification-badge" class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center animate-pulse">0</span>
+                            </button>
+                            
+                            <!-- Dropdown des notifications -->
+                            <div id="notifications-dropdown" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                                <div class="p-4 border-b border-gray-200">
+                                    <div class="flex items-center justify-between">
+                                        <h3 class="text-lg font-semibold text-gray-800">Notifications</h3>
+                                        <button onclick="clearAllNotifications()" class="text-sm text-blue-600 hover:text-blue-800">Tout effacer</button>
+                                    </div>
+                                </div>
+                                <div id="notifications-list" class="max-h-64 overflow-y-auto">
+                                    <div class="p-4 text-center text-gray-500">
+                                        <i class="fas fa-bell-slash text-2xl mb-2"></i>
+                                        <p>Aucune notification</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <% if (typeof headerActions !== 'undefined' && headerActions) { %>
+                            <%- headerActions %>
+                        <% } %>
+                        <div class="flex items-center text-terre-600">
+                            <i class="fas fa-user-circle mr-2 text-bogolan-500"></i>
+                            <span class="text-sm">Admin Mansa</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content Area -->
+            <main class="flex-1 overflow-y-auto p-6">
+                <% if (typeof error !== 'undefined' && error) { %>
+                    <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
+                        <div class="flex items-center">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                            <span><%= error %></span>
+                        </div>
+                    </div>
+                <% } %>
+                
+                <% if (typeof success !== 'undefined' && success) { %>
+                    <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg">
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle mr-2"></i>
+                            <span><%= success %></span>
+                        </div>
+                    </div>
+                <% } %>

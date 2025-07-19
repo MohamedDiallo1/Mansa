@@ -1,0 +1,386 @@
+<%- include('partials/header', { title: title, user: user }) %>
+
+<section class="py-8">
+    <div class="container mx-auto px-4">
+        <!-- Breadcrumb -->
+        <nav class="flex mb-8" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                <li class="inline-flex items-center">
+                    <a href="/" class="text-gray-700 hover:text-bogolan">
+                        <i class="fas fa-home"></i>
+                    </a>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
+                        <span class="text-gray-500">Boutique</span>
+                    </div>
+                </li>
+            </ol>
+        </nav>
+
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Sidebar Filters -->
+            <div class="lg:w-1/4">
+                <div class="bg-white rounded-lg shadow-md p-6 sticky top-24" id="filters-panel" style="display: none;">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-bold text-bogolan">Filtres</h2>
+                        <button onclick="toggleFilters()" class="text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <form method="GET" action="/boutique" class="space-y-6">
+                        <!-- Matière -->
+                        <div>
+                            <h3 class="font-semibold mb-3">Matière</h3>
+                            <div class="space-y-2">
+                                <% matieres.forEach(m => { %>
+                                    <label class="flex items-center">
+                                        <input 
+                                            type="radio" 
+                                            name="matiere" 
+                                            value="<%= m.matiere %>"
+                                            <%= filters.matiere === m.matiere ? 'checked' : '' %>
+                                            class="h-4 w-4 text-bogolan focus:ring-bogolan border-gray-300"
+                                        >
+                                        <span class="ml-2 text-sm capitalize"><%= m.matiere %></span>
+                                    </label>
+                                <% }); %>
+                            </div>
+                        </div>
+
+                        <!-- Type -->
+                        <div>
+                            <h3 class="font-semibold mb-3">Type</h3>
+                            <div class="space-y-2">
+                                <% types.forEach(t => { %>
+                                    <label class="flex items-center">
+                                        <input 
+                                            type="radio" 
+                                            name="type" 
+                                            value="<%= t.type %>"
+                                            <%= filters.type === t.type ? 'checked' : '' %>
+                                            class="h-4 w-4 text-bogolan focus:ring-bogolan border-gray-300"
+                                        >
+                                        <span class="ml-2 text-sm"><%= t.type %></span>
+                                    </label>
+                                <% }); %>
+                            </div>
+                        </div>
+
+                        <!-- Couleur -->
+                        <div>
+                            <h3 class="font-semibold mb-3">Couleur</h3>
+                            <div class="space-y-2">
+                                <% couleurs.forEach(c => { %>
+                                    <label class="flex items-center">
+                                        <input 
+                                            type="radio" 
+                                            name="couleur" 
+                                            value="<%= c.couleur %>"
+                                            <%= filters.couleur === c.couleur ? 'checked' : '' %>
+                                            class="h-4 w-4 text-bogolan focus:ring-bogolan border-gray-300"
+                                        >
+                                        <span class="ml-2 text-sm capitalize"><%= c.couleur %></span>
+                                    </label>
+                                <% }); %>
+                            </div>
+                        </div>
+
+                        <!-- Taille -->
+                        <div>
+                            <h3 class="font-semibold mb-3">Taille</h3>
+                            <div class="space-y-2">
+                                <% tailles.forEach(t => { %>
+                                    <label class="flex items-center">
+                                        <input 
+                                            type="radio" 
+                                            name="taille" 
+                                            value="<%= t.taille %>"
+                                            <%= filters.taille === t.taille ? 'checked' : '' %>
+                                            class="h-4 w-4 text-bogolan focus:ring-bogolan border-gray-300"
+                                        >
+                                        <span class="ml-2 text-sm"><%= t.taille %></span>
+                                    </label>
+                                <% }); %>
+                            </div>
+                        </div>
+
+                        <!-- Prix -->
+                        <div>
+                            <h3 class="font-semibold mb-3">Prix</h3>
+                            <div class="space-y-2">
+                                <div class="flex items-center space-x-2">
+                                    <input 
+                                        type="number" 
+                                        name="prix_min" 
+                                        placeholder="Min"
+                                        value="<%= filters.prix_min || '' %>"
+                                        class="w-20 px-2 py-1 text-sm border border-gray-300 rounded"
+                                    >
+                                    <span class="text-gray-500">€</span>
+                                    <span class="text-gray-500">-</span>
+                                    <input 
+                                        type="number" 
+                                        name="prix_max" 
+                                        placeholder="Max"
+                                        value="<%= filters.prix_max || '' %>"
+                                        class="w-20 px-2 py-1 text-sm border border-gray-300 rounded"
+                                    >
+                                    <span class="text-gray-500">€</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="space-y-2">
+                            <button 
+                                type="submit" 
+                                class="w-full bg-bogolan text-white py-2 px-4 rounded-lg font-medium hover:bg-bogolan-light transition-colors"
+                            >
+                                Appliquer les filtres
+                            </button>
+                            <a 
+                                href="/boutique" 
+                                class="w-full inline-block text-center bg-gray-200 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+                            >
+                                Effacer les filtres
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="lg:w-3/4">
+                <!-- Header -->
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center space-x-4">
+                        <h1 class="text-2xl font-bold text-bogolan">
+                            Boutique
+                            <span class="text-sm text-gray-500 font-normal">
+                                (<%= produits.length %> produits)
+                            </span>
+                        </h1>
+                        
+                        <!-- Bouton pour afficher les filtres -->
+                        <button onclick="toggleFilters()" class="lg:hidden bg-bogolan text-white px-4 py-2 rounded-lg font-medium hover:bg-bogolan-light transition-colors">
+                            <i class="fas fa-filter mr-2"></i>
+                            Filtres
+                        </button>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4">
+                        <!-- Bouton filtres pour desktop -->
+                        <button onclick="toggleFilters()" class="hidden lg:block bg-bogolan text-white px-4 py-2 rounded-lg font-medium hover:bg-bogolan-light transition-colors">
+                            <i class="fas fa-filter mr-2"></i>
+                            Filtres
+                        </button>
+                        
+                        <select class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-bogolan">
+                            <option>Trier par</option>
+                            <option>Prix croissant</option>
+                            <option>Prix décroissant</option>
+                            <option>Nouveautés</option>
+                            <option>Meilleures ventes</option>
+                        </select>
+                        
+                        <div class="flex items-center space-x-2">
+                            <button class="p-2 bg-bogolan text-white rounded-lg">
+                                <i class="fas fa-th"></i>
+                            </button>
+                            <button class="p-2 bg-gray-200 text-gray-700 rounded-lg">
+                                <i class="fas fa-list"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Products -->
+                <% if (produits.length > 0) { %>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <% produits.forEach(produit => { %>
+                            <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                                <div class="aspect-square bg-gray-200 rounded-t-lg relative overflow-hidden">
+                                    <% if (produit.images) { %>
+                                        <% 
+                                        let images;
+                                        try {
+                                            images = typeof produit.images === 'string' ? JSON.parse(produit.images) : produit.images;
+                                        } catch(e) {
+                                            images = null;
+                                        }
+                                        %>
+                                        <% if (images && images.principale) { %>
+                                            <img src="/uploads/products/<%= images.principale %>" alt="<%= produit.nom %>" class="w-full h-full object-cover" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'w-full h-full bg-gradient-to-br from-bogolan to-terre flex items-center justify-center\'><i class=\'fas fa-image text-white text-4xl opacity-50\'></i></div>'">
+                                        <% } else { %>
+                                            <div class="w-full h-full bg-gradient-to-br from-bogolan to-terre flex items-center justify-center">
+                                                <i class="fas fa-image text-white text-4xl opacity-50"></i>
+                                            </div>
+                                        <% } %>
+                                    <% } else { %>
+                                        <div class="w-full h-full bg-gradient-to-br from-bogolan to-terre flex items-center justify-center">
+                                            <i class="fas fa-image text-white text-4xl opacity-50"></i>
+                                        </div>
+                                    <% } %>
+                                    
+                                    <!-- Badges -->
+                                    <div class="absolute top-2 left-2 space-y-1">
+                                        <% if (produit.nouveaute) { %>
+                                            <span class="bg-green-500 text-white text-xs px-2 py-1 rounded-full">
+                                                Nouveau
+                                            </span>
+                                        <% } %>
+                                        <% if (produit.prix_promo && produit.prix_promo > 0) { %>
+                                            <span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+                                                Promo
+                                            </span>
+                                        <% } %>
+                                    </div>
+                                    
+                                    <!-- Actions -->
+                                    <div class="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-20 transition-all flex items-center justify-center opacity-0 hover:opacity-100">
+                                        <div class="flex space-x-2">
+                                            <a href="/produit/<%= produit.id %>" class="bg-white text-bogolan p-2 rounded-full hover:bg-gray-100 transition-colors">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <% if (user && produit.stock_actuel > 0) { %>
+                                                <button onclick="addToCart(<%= produit.id %>)" class="bg-white text-bogolan p-2 rounded-full hover:bg-gray-100 transition-colors">
+                                                    <i class="fas fa-shopping-cart"></i>
+                                                </button>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="p-4">
+                                    <h3 class="font-semibold text-lg mb-2 text-gray-800">
+                                        <%= produit.nom %>
+                                    </h3>
+                                    <p class="text-gray-600 text-sm mb-2">
+                                        <%= produit.matiere %> - <%= produit.type %>
+                                    </p>
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-2">
+                                            <% if (produit.prix_promo && produit.prix_promo > 0) { %>
+                                                <span class="text-xl font-bold text-red-600">
+                                                    <%= parseFloat(produit.prix_promo).toFixed(2) %>€
+                                                </span>
+                                                <span class="text-sm text-gray-500 line-through">
+                                                    <%= parseFloat(produit.prix_vente).toFixed(2) %>€
+                                                </span>
+                                            <% } else { %>
+                                                <span class="text-xl font-bold text-bogolan">
+                                                    <%= parseFloat(produit.prix_vente).toFixed(2) %>€
+                                                </span>
+                                            <% } %>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <span class="text-sm text-gray-500">
+                                                <i class="fas fa-star text-yellow-400"></i>
+                                                <%= produit.note_moyenne || 0 %>
+                                            </span>
+                                            <% if (produit.stock_total > 0) { %>
+                                                <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                                                    En stock
+                                                </span>
+                                            <% } else { %>
+                                                <span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full">
+                                                    Rupture
+                                                </span>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+                <% } else { %>
+                    <div class="text-center py-16">
+                        <i class="fas fa-search text-6xl text-gray-400 mb-4"></i>
+                        <h3 class="text-xl font-semibold text-gray-600 mb-2">Aucun produit trouvé</h3>
+                        <p class="text-gray-500 mb-6">Essayez de modifier vos filtres ou parcourez toute la collection</p>
+                        <a href="/boutique" class="bg-bogolan text-white px-6 py-3 rounded-lg font-semibold hover:bg-bogolan-light transition-colors">
+                            Voir tous les produits
+                        </a>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+// Toggle filters function
+function toggleFilters() {
+    const filtersPanel = document.getElementById('filters-panel');
+    if (filtersPanel.style.display === 'none' || filtersPanel.style.display === '') {
+        filtersPanel.style.display = 'block';
+    } else {
+        filtersPanel.style.display = 'none';
+    }
+}
+
+// Add to cart function
+async function addToCart(productId) {
+    <% if (user) { %>
+        // User is logged in, proceed with adding to cart
+    <% } else { %>
+        window.location.href = '/connexion';
+        return;
+    <% } %>
+    
+    try {
+        // Get first available variant for this product
+        const response = await fetch(`/api/produit/${productId}/variants`);
+        const data = await response.json();
+        
+        if (data.success && data.variants.length > 0) {
+            const variant = data.variants[0];
+            
+            const cartResponse = await fetch('/api/panier/ajouter', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    variant_id: variant.id,
+                    quantite: 1
+                })
+            });
+            
+            const cartData = await cartResponse.json();
+            
+            if (cartData.success) {
+                // Update cart count
+                loadCartCount();
+                
+                // Show success message
+                showNotification('Produit ajouté au panier', 'success');
+            } else {
+                showNotification(cartData.message || 'Erreur lors de l\'ajout au panier', 'error');
+            }
+        } else {
+            showNotification('Produit non disponible', 'error');
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+        showNotification('Erreur lors de l\'ajout au panier', 'error');
+    }
+}
+
+// Simple notification function
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg ${type === 'success' ? 'bg-green-500' : 'bg-red-500'} text-white`;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+</script>
+
+<%- include('partials/footer') %>

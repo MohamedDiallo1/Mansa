@@ -1,0 +1,130 @@
+<%- include('../partials/header', { 
+    title: 'Dashboard',
+    currentPage: 'dashboard',
+    pageTitle: 'Tableau de bord',
+    pageSubtitle: 'Vue d\'ensemble de votre boutique Mansa'
+}) %>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-bogolan-500">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-bogolan-100 rounded-full">
+                                <i class="fas fa-box text-bogolan-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                            <p class="text-sm text-terre-600">Produits actifs</p>
+                            <p class="text-2xl font-bold text-terre-900"><%= stats.products %></p>
+                                <p class="text-xs text-green-600 mt-1">
+                                    <i class="fas fa-arrow-up mr-1"></i>
+                                    +2% ce mois
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-terre-500">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-terre-100 rounded-full">
+                                <i class="fas fa-shopping-cart text-terre-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                            <p class="text-sm text-terre-600">Commandes</p>
+                            <p class="text-2xl font-bold text-terre-900"><%= stats.orders %></p>
+                                <p class="text-xs text-green-600 mt-1">
+                                    <i class="fas fa-arrow-up mr-1"></i>
+                                    +8% ce mois
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-green-500">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-green-100 rounded-full">
+                                <i class="fas fa-users text-green-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm text-terre-600">Clients</p>
+                                <p class="text-2xl font-bold text-terre-900"><%= stats.customers %></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-orange-500">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-orange-100 rounded-full">
+                                <i class="fas fa-star text-orange-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm text-terre-600">Avis en attente</p>
+                                <p class="text-2xl font-bold text-terre-900"><%= stats.pendingReviews %></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Two column layout -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Recent Orders -->
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-lg font-semibold mb-4">Commandes récentes</h3>
+                        <div class="space-y-3">
+                            <% if (recentOrders.length > 0) { %>
+                                <% recentOrders.forEach(order => { %>
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded">
+                                        <div>
+                                            <p class="font-medium">#<%= order.numero_commande %></p>
+                                            <p class="text-sm text-gray-600">
+                                                <%= order.prenom %> <%= order.nom %> - <%= order.total %>€
+                                            </p>
+                                        </div>
+                                        <span class="px-2 py-1 text-xs font-medium rounded-full
+                                            <%= order.statut === 'en_attente' ? 'bg-yellow-100 text-yellow-800' :
+                                                order.statut === 'confirmee' ? 'bg-blue-100 text-blue-800' :
+                                                order.statut === 'expediee' ? 'bg-green-100 text-green-800' :
+                                                'bg-gray-100 text-gray-800' %>">
+                                            <%= order.statut %>
+                                        </span>
+                                    </div>
+                                <% }) %>
+                            <% } else { %>
+                                <p class="text-gray-500">Aucune commande récente</p>
+                            <% } %>
+                        </div>
+                        <div class="mt-4">
+                            <a href="/orders" class="text-blue-600 hover:text-blue-800 text-sm">Voir toutes les commandes →</a>
+                        </div>
+                    </div>
+
+                    <!-- Low Stock Alert -->
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-lg font-semibold mb-4">Alertes stock</h3>
+                        <div class="space-y-3">
+                            <% if (lowStock.length > 0) { %>
+                                <% lowStock.forEach(item => { %>
+                                    <div class="flex items-center justify-between p-3 bg-red-50 rounded">
+                                        <div>
+                                            <p class="font-medium"><%= item.nom %></p>
+                                            <p class="text-sm text-gray-600">
+                                                <%= item.taille %> - <%= item.couleur %>
+                                            </p>
+                                        </div>
+                                        <span class="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800">
+                                            <%= item.stock_actuel %>/<%= item.stock_minimum %>
+                                        </span>
+                                    </div>
+                                <% }) %>
+                            <% } else { %>
+                                <p class="text-gray-500">Pas d'alerte stock</p>
+                            <% } %>
+                        </div>
+                        <div class="mt-4">
+                            <a href="/products/stock" class="text-bogolan-600 hover:text-bogolan-800 text-sm font-medium transition-colors">Gérer les stocks →</a>
+                        </div>
+                    </div>
+                </div>
+
+
+
+<%- include('../partials/footer') %>

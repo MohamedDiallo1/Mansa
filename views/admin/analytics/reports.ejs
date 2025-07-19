@@ -1,0 +1,341 @@
+<%- include('../partials/header', { 
+    title: 'Rapports détaillés - Mansa Admin',
+    currentPage: 'analytics',
+    pageTitle: 'Rapports détaillés',
+    pageSubtitle: 'Analysez les performances de votre boutique'
+}) %>
+
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-800">Rapports détaillés</h1>
+        <div class="flex space-x-4">
+            <a href="/analytics/dashboard" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                <i class="fas fa-chart-pie mr-2"></i>Dashboard
+            </a>
+            <button onclick="exportData()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+                <i class="fas fa-download mr-2"></i>Exporter
+            </button>
+        </div>
+    </div>
+
+    <!-- Statistiques rapides -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600">Ventes aujourd'hui</p>
+                    <p class="text-2xl font-bold text-gray-800" id="ventesAujourdhui">-</p>
+                </div>
+                <div class="bg-blue-100 p-3 rounded-full">
+                    <i class="fas fa-shopping-cart text-blue-600"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600">CA aujourd'hui</p>
+                    <p class="text-2xl font-bold text-gray-800" id="caAujourdhui">-</p>
+                </div>
+                <div class="bg-green-100 p-3 rounded-full">
+                    <i class="fas fa-euro-sign text-green-600"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600">Nouveaux clients</p>
+                    <p class="text-2xl font-bold text-gray-800" id="nouveauxClients">-</p>
+                </div>
+                <div class="bg-purple-100 p-3 rounded-full">
+                    <i class="fas fa-users text-purple-600"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600">Taux de conversion</p>
+                    <p class="text-2xl font-bold text-gray-800" id="tauxConversion">-</p>
+                </div>
+                <div class="bg-yellow-100 p-3 rounded-full">
+                    <i class="fas fa-percentage text-yellow-600"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <h2 class="text-xl font-bold mb-4">Filtres</h2>
+        <form method="GET" class="grid grid-cols-1 md:grid-cols-5 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Type de rapport</label>
+                <select name="type" class="w-full p-2 border border-gray-300 rounded-lg">
+                    <option value="ventes" <%= type === 'ventes' ? 'selected' : '' %>>Ventes</option>
+                    <option value="stock" <%= type === 'stock' ? 'selected' : '' %>>Mouvements de stock</option>
+                    <option value="clients" <%= type === 'clients' ? 'selected' : '' %>>Clients</option>
+                    <option value="produits" <%= type === 'produits' ? 'selected' : '' %>>Produits</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Période</label>
+                <select name="periode" class="w-full p-2 border border-gray-300 rounded-lg">
+                    <option value="jour" <%= periode === 'jour' ? 'selected' : '' %>>Aujourd'hui</option>
+                    <option value="semaine" <%= periode === 'semaine' ? 'selected' : '' %>>Cette semaine</option>
+                    <option value="mois" <%= periode === 'mois' ? 'selected' : '' %>>Ce mois</option>
+                    <option value="annee" <%= periode === 'annee' ? 'selected' : '' %>>Cette année</option>
+                    <option value="personnalise" <%= periode === 'personnalise' ? 'selected' : '' %>>Personnalisé</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Date début</label>
+                <input type="date" name="date_debut" class="w-full p-2 border border-gray-300 rounded-lg">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Date fin</label>
+                <input type="date" name="date_fin" class="w-full p-2 border border-gray-300 rounded-lg">
+            </div>
+            <div class="flex items-end">
+                <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700">
+                    <i class="fas fa-filter mr-2"></i>Appliquer
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Résultats -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-bold">
+                <% if (type === 'ventes') { %>
+                    Rapport des ventes
+                <% } else if (type === 'stock') { %>
+                    Mouvements de stock
+                <% } else if (type === 'clients') { %>
+                    Rapport clients
+                <% } else if (type === 'produits') { %>
+                    Rapport produits
+                <% } %>
+            </h2>
+            <div class="flex space-x-2">
+                <button onclick="printReport()" class="bg-gray-600 text-white px-3 py-1 rounded text-sm hover:bg-gray-700">
+                    <i class="fas fa-print mr-1"></i>Imprimer
+                </button>
+                <button onclick="exportCSV()" class="bg-orange-600 text-white px-3 py-1 rounded text-sm hover:bg-orange-700">
+                    <i class="fas fa-file-csv mr-1"></i>CSV
+                </button>
+            </div>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <% if (type === 'ventes') { %>
+                <table class="w-full table-auto" id="reportTable">
+                    <thead>
+                        <tr class="bg-gray-50">
+                            <th class="px-4 py-2 text-left">N° Commande</th>
+                            <th class="px-4 py-2 text-left">Date</th>
+                            <th class="px-4 py-2 text-left">Client</th>
+                            <th class="px-4 py-2 text-left">Articles</th>
+                            <th class="px-4 py-2 text-left">Total</th>
+                            <th class="px-4 py-2 text-left">Bénéfice</th>
+                            <th class="px-4 py-2 text-left">Statut</th>
+                            <th class="px-4 py-2 text-left">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (rapports && rapports.length > 0) { %>
+                            <% rapports.forEach(rapport => { %>
+                                <tr class="border-b hover:bg-gray-50">
+                                    <td class="px-4 py-2 font-medium"><%= rapport.numero_commande %></td>
+                                    <td class="px-4 py-2"><%= new Date(rapport.created_at).toLocaleDateString('fr-FR') %></td>
+                                    <td class="px-4 py-2">
+                                        <% if (rapport.prenom && rapport.nom) { %>
+                                            <%= rapport.prenom %> <%= rapport.nom %>
+                                            <br><small class="text-gray-500"><%= rapport.email %></small>
+                                        <% } else { %>
+                                            <span class="text-gray-500">Client invité</span>
+                                        <% } %>
+                                    </td>
+                                    <td class="px-4 py-2"><%= rapport.nombre_articles %></td>
+                                    <td class="px-4 py-2 font-bold"><%= parseFloat(rapport.total || 0).toFixed(2) %>€</td>
+                                    <td class="px-4 py-2 font-bold <%= rapport.benefice >= 0 ? 'text-green-600' : 'text-red-600' %>">
+                                        <%= parseFloat(rapport.benefice || 0).toFixed(2) %>€
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        <span class="px-2 py-1 text-xs font-semibold rounded-full 
+                                            <%= rapport.statut === 'livree' ? 'bg-green-100 text-green-800' : 
+                                                rapport.statut === 'expediee' ? 'bg-blue-100 text-blue-800' :
+                                                rapport.statut === 'preparee' ? 'bg-yellow-100 text-yellow-800' :
+                                                'bg-gray-100 text-gray-800' %>">
+                                            <%= rapport.statut %>
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        <a href="/orders/<%= rapport.id || rapport.numero_commande %>" class="text-blue-600 hover:text-blue-800 text-sm">
+                                            <i class="fas fa-eye mr-1"></i>Voir
+                                        </a>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        <% } %>
+                    </tbody>
+                </table>
+            <% } else if (type === 'stock') { %>
+                <table class="w-full table-auto" id="reportTable">
+                    <thead>
+                        <tr class="bg-gray-50">
+                            <th class="px-4 py-2 text-left">Date</th>
+                            <th class="px-4 py-2 text-left">Produit</th>
+                            <th class="px-4 py-2 text-left">SKU</th>
+                            <th class="px-4 py-2 text-left">Type</th>
+                            <th class="px-4 py-2 text-left">Quantité</th>
+                            <th class="px-4 py-2 text-left">Stock avant</th>
+                            <th class="px-4 py-2 text-left">Stock après</th>
+                            <th class="px-4 py-2 text-left">Motif</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (rapports && rapports.length > 0) { %>
+                            <% rapports.forEach(rapport => { %>
+                                <tr class="border-b hover:bg-gray-50">
+                                    <td class="px-4 py-2"><%= new Date(rapport.created_at).toLocaleDateString('fr-FR') %></td>
+                                    <td class="px-4 py-2">
+                                        <%= rapport.produit_nom %>
+                                        <br><small class="text-gray-500"><%= rapport.taille %> - <%= rapport.couleur %></small>
+                                    </td>
+                                    <td class="px-4 py-2 font-mono text-sm"><%= rapport.sku %></td>
+                                    <td class="px-4 py-2">
+                                        <span class="px-2 py-1 text-xs font-semibold rounded-full 
+                                            <%= rapport.type === 'entree' ? 'bg-green-100 text-green-800' : 
+                                                rapport.type === 'sortie' ? 'bg-red-100 text-red-800' :
+                                                'bg-blue-100 text-blue-800' %>">
+                                            <%= rapport.type %>
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-2 font-bold 
+                                        <%= rapport.quantite > 0 ? 'text-green-600' : 'text-red-600' %>">
+                                        <%= rapport.quantite > 0 ? '+' : '' %><%= rapport.quantite %>
+                                    </td>
+                                    <td class="px-4 py-2"><%= rapport.stock_avant %></td>
+                                    <td class="px-4 py-2"><%= rapport.stock_apres %></td>
+                                    <td class="px-4 py-2"><%= rapport.motif %></td>
+                                </tr>
+                            <% }); %>
+                        <% } %>
+                    </tbody>
+                </table>
+            <% } %>
+        </div>
+        
+        <% if (!rapports || rapports.length === 0) { %>
+            <div class="text-center py-8">
+                <i class="fas fa-inbox text-4xl text-gray-400 mb-4"></i>
+                <h3 class="text-xl font-semibold text-gray-600 mb-2">Aucune donnée trouvée</h3>
+                <p class="text-gray-500">Aucun résultat ne correspond à vos critères de recherche.</p>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+<script>
+// Charger les statistiques rapides
+async function loadQuickStats() {
+    try {
+        const response = await fetch('/analytics/api/quick-stats');
+        const data = await response.json();
+        
+        if (data.success) {
+            document.getElementById('ventesAujourdhui').textContent = data.stats.ventesAujourdhui;
+            document.getElementById('caAujourdhui').textContent = data.stats.caAujourdhui.toFixed(2) + '€';
+            document.getElementById('nouveauxClients').textContent = data.stats.nouveauxClients;
+            document.getElementById('tauxConversion').textContent = data.stats.tauxConversion.toFixed(1) + '%';
+        }
+    } catch (error) {
+        console.error('Erreur lors du chargement des statistiques:', error);
+        // Afficher des valeurs par défaut en cas d'erreur
+        document.getElementById('ventesAujourdhui').textContent = '0';
+        document.getElementById('caAujourdhui').textContent = '0€';
+        document.getElementById('nouveauxClients').textContent = '0';
+        document.getElementById('tauxConversion').textContent = '0%';
+    }
+}
+
+// Exporter les données
+function exportData() {
+    const type = new URLSearchParams(window.location.search).get('type') || 'ventes';
+    const periode = new URLSearchParams(window.location.search).get('periode') || 'mois';
+    
+    window.location.href = `/analytics/export?type=${type}&periode=${periode}`;
+}
+
+// Exporter en CSV
+function exportCSV() {
+    const table = document.getElementById('reportTable');
+    if (!table) return;
+    
+    let csv = '';
+    
+    // En-têtes
+    const headers = table.querySelectorAll('thead th');
+    headers.forEach((header, index) => {
+        csv += '"' + header.textContent.trim() + '"';
+        if (index < headers.length - 1) csv += ',';
+    });
+    csv += '\n';
+    
+    // Données
+    const rows = table.querySelectorAll('tbody tr');
+    rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        cells.forEach((cell, index) => {
+            csv += '"' + cell.textContent.trim().replace(/"/g, '""') + '"';
+            if (index < cells.length - 1) csv += ',';
+        });
+        csv += '\n';
+    });
+    
+    // Télécharger
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'rapport-' + new Date().toISOString().split('T')[0] + '.csv';
+    link.click();
+}
+
+// Imprimer le rapport
+function printReport() {
+    window.print();
+}
+
+// Charger les statistiques au chargement de la page
+document.addEventListener('DOMContentLoaded', loadQuickStats);
+</script>
+
+<style>
+@media print {
+    .container {
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    .no-print, button {
+        display: none !important;
+    }
+    
+    .bg-white {
+        background: white !important;
+    }
+    
+    .shadow-md {
+        box-shadow: none !important;
+    }
+}
+</style>
+
+<%- include('../partials/footer') %>

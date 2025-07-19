@@ -1,0 +1,569 @@
+<%- include('partials/header', { title: title, user: user }) %>
+
+<section class="py-8">
+    <div class="container mx-auto px-4">
+        <!-- Breadcrumb -->
+        <nav class="flex mb-8" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                <li class="inline-flex items-center">
+                    <a href="/" class="text-gray-700 hover:text-bogolan">
+                        <i class="fas fa-home"></i>
+                    </a>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
+                        <a href="/boutique" class="text-gray-700 hover:text-bogolan">Boutique</a>
+                    </div>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
+                        <span class="text-gray-500"><%= produit.nom %></span>
+                    </div>
+                </li>
+            </ol>
+        </nav>
+
+        <!-- Product Details -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+            <!-- Product Images avec Slider -->
+            <div class="space-y-4">
+                <!-- Image principale -->
+                <div class="relative aspect-square bg-gray-200 rounded-lg overflow-hidden">
+                    <% if (produit.images) { %>
+                        <% 
+                        let imageData;
+                        try {
+                            imageData = typeof produit.images === 'string' ? JSON.parse(produit.images) : produit.images;
+                        } catch(e) {
+                            imageData = {};
+                        }
+                        
+                        let allImages = [];
+                        if (imageData.principale) allImages.push(imageData.principale);
+                        if (imageData.galerie && Array.isArray(imageData.galerie)) {
+                            allImages = allImages.concat(imageData.galerie);
+                        }
+                        %>
+                        
+                        <% if (allImages.length > 0) { %>
+                            <!-- Slider container -->
+                            <div id="image-slider" class="relative w-full h-full">
+                                <% allImages.forEach((image, index) => { %>
+                                    <div class="slider-image absolute inset-0 w-full h-full transition-opacity duration-300" style="opacity: <%= index === 0 ? '1' : '0' %>;">
+                                        <img src="/uploads/products/<%= image %>" alt="<%= produit.nom %>" class="w-full h-full object-cover">
+                                    </div>
+                                <% }); %>
+                                
+                                <!-- Navigation buttons -->
+                                <% if (allImages.length > 1) { %>
+                                    <button onclick="changeSliderImage(-1)" class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 text-gray-800 p-2 rounded-full shadow-lg transition-all">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </button>
+                                    <button onclick="changeSliderImage(1)" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 text-gray-800 p-2 rounded-full shadow-lg transition-all">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                    
+                                    <!-- Indicateurs -->
+                                    <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                                        <% allImages.forEach((image, index) => { %>
+                                            <button onclick="setSliderImage(<%= index %>)" class="w-3 h-3 rounded-full bg-white transition-all dot-indicator" data-index="<%= index %>" style="opacity: <%= index === 0 ? '1' : '0.6' %>;"></button>
+                                        <% }); %>
+                                    </div>
+                                <% } %>
+                            </div>
+                        <% } else { %>
+                            <div class="w-full h-full flex items-center justify-center bg-gray-200">
+                                <i class="fas fa-image text-4xl text-gray-400"></i>
+                            </div>
+                        <% } %>
+                    <% } %>
+                </div>
+                
+                <!-- Miniatures -->
+                <% if (produit.images) { %>
+                    <% 
+                    let imageData;
+                    try {
+                        imageData = typeof produit.images === 'string' ? JSON.parse(produit.images) : produit.images;
+                    } catch(e) {
+                        imageData = {};
+                    }
+                    
+                    let allImages = [];
+                    if (imageData.principale) allImages.push(imageData.principale);
+                    if (imageData.galerie && Array.isArray(imageData.galerie)) {
+                        allImages = allImages.concat(imageData.galerie);
+                    }
+                    %>
+                    
+                    <% if (allImages.length > 1) { %>
+                        <div class="grid grid-cols-4 gap-2">
+                            <% allImages.forEach((image, index) => { %>
+                                <div class="aspect-square bg-gray-200 rounded-lg overflow-hidden cursor-pointer border-2 transition-colors thumbnail-image" onclick="setSliderImage(<%= index %>)" data-index="<%= index %>" style="border-color: <%= index === 0 ? '#8B4513' : 'transparent' %>;">
+                                    <img src="/uploads/products/<%= image %>" alt="<%= produit.nom %>" class="w-full h-full object-cover">
+                                </div>
+                            <% }); %>
+                        </div>
+                    <% } %>
+                <% } %>
+            </div>
+
+            <!-- Product Info -->
+            <div class="space-y-6">
+                <!-- Product Header -->
+                <div>
+                    <h1 class="text-3xl font-bold text-bogolan mb-2"><%= produit.nom %></h1>
+                    <p class="text-gray-600 mb-4"><%= produit.matiere %> - <%= produit.type %></p>
+                    
+                    <!-- Rating -->
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="flex items-center">
+                            <% for (let i = 1; i <= 5; i++) { %>
+                                <i class="fas fa-star <%= i <= Math.floor(produit.note_moyenne || 0) ? 'text-yellow-400' : 'text-gray-300' %>"></i>
+                            <% } %>
+                        </div>
+                        <span class="text-gray-600">(<%= produit.nombre_avis || 0 %> avis)</span>
+                    </div>
+
+                    <!-- Price -->
+                    <div class="flex items-center space-x-4 mb-6">
+                        <% if (produit.prix_promo && parseFloat(produit.prix_promo) > 0) { %>
+                            <span class="text-3xl font-bold text-red-600">
+                                <%= parseFloat(produit.prix_promo).toFixed(2) %>€
+                            </span>
+                            <span class="text-xl text-gray-500 line-through">
+                                <%= parseFloat(produit.prix_vente).toFixed(2) %>€
+                            </span>
+                        <% } else { %>
+                            <span class="text-3xl font-bold text-bogolan">
+                                <%= parseFloat(produit.prix_vente).toFixed(2) %>€
+                            </span>
+                        <% } %>
+                    </div>
+                </div>
+
+                <!-- Variants Selection -->
+                <div class="space-y-4">
+                    <div>
+                        <h3 class="font-semibold mb-2">Taille</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <% const tailles = [...new Set(variants.map(v => v.taille))]; %>
+                            <% tailles.forEach(taille => { %>
+                                <button 
+                                    class="size-btn px-4 py-2 border border-gray-300 rounded-lg hover:border-bogolan transition-colors"
+                                    data-taille="<%= taille %>"
+                                    onclick="selectSize('<%= taille %>')"
+                                >
+                                    <%= taille %>
+                                </button>
+                            <% }); %>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="font-semibold mb-2">Couleur</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <% const couleurs = [...new Set(variants.map(v => v.couleur))]; %>
+                            <% couleurs.forEach(couleur => { %>
+                                <button 
+                                    class="color-btn px-4 py-2 border border-gray-300 rounded-lg hover:border-bogolan transition-colors capitalize"
+                                    data-couleur="<%= couleur %>"
+                                    onclick="selectColor('<%= couleur %>')"
+                                >
+                                    <%= couleur %>
+                                </button>
+                            <% }); %>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stock Status -->
+                <div id="stock-status" class="text-sm">
+                    <span class="text-gray-500">Sélectionnez une taille et une couleur</span>
+                </div>
+
+                <!-- Add to Cart -->
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center border rounded-lg">
+                        <button 
+                            onclick="changeQuantity(-1)"
+                            class="px-3 py-2 text-gray-600 hover:text-bogolan"
+                            id="decrease-btn"
+                            disabled
+                        >
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <span id="quantity" class="px-4 py-2 min-w-[3rem] text-center">1</span>
+                        <button 
+                            onclick="changeQuantity(1)"
+                            class="px-3 py-2 text-gray-600 hover:text-bogolan"
+                            id="increase-btn"
+                            disabled
+                        >
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+
+                    <button 
+                        id="add-to-cart-btn"
+                        onclick="addToCart()"
+                        class="flex-1 bg-bogolan text-white px-6 py-3 rounded-lg font-semibold hover:bg-bogolan-light transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled
+                    >
+                        <i class="fas fa-shopping-cart mr-2"></i>
+                        Ajouter au panier
+                    </button>
+                </div>
+
+                <!-- Product Description -->
+                <div class="border-t pt-6">
+                    <h3 class="font-semibold mb-3">Description</h3>
+                    <% if (produit.description_courte) { %>
+                        <p class="text-gray-700 mb-4"><%= produit.description_courte %></p>
+                    <% } %>
+                    <% if (produit.description_longue) { %>
+                        <div class="text-gray-700">
+                            <%- produit.description_longue %>
+                        </div>
+                    <% } %>
+                </div>
+
+                <!-- Features -->
+                <div class="border-t pt-6">
+                    <h3 class="font-semibold mb-3">Caractéristiques</h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Matière : <%= produit.matiere %></li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Type : <%= produit.type %></li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Livraison gratuite dès 150€</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>Retour gratuit sous 30 jours</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Reviews -->
+        <div class="border-t pt-16">
+            <h2 class="text-2xl font-bold mb-8 text-bogolan">Avis clients</h2>
+            
+            <% if (avis && avis.length > 0) { %>
+                <div class="space-y-6">
+                    <% avis.forEach(avis => { %>
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 bg-bogolan rounded-full flex items-center justify-center">
+                                        <span class="text-white font-semibold">
+                                            <%= avis.prenom ? avis.prenom.charAt(0).toUpperCase() : 'A' %>
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold"><%= avis.prenom %> <%= avis.nom ? avis.nom.charAt(0).toUpperCase() + '.' : '' %></h4>
+                                        <div class="flex items-center">
+                                            <% for (let i = 1; i <= 5; i++) { %>
+                                                <i class="fas fa-star <%= i <= avis.note ? 'text-yellow-400' : 'text-gray-300' %> text-sm"></i>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="text-gray-500 text-sm">
+                                    <%= new Date(avis.created_at).toLocaleDateString('fr-FR') %>
+                                </span>
+                            </div>
+                            
+                            <% if (avis.titre) { %>
+                                <h5 class="font-semibold mb-2"><%= avis.titre %></h5>
+                            <% } %>
+                            
+                            <% if (avis.commentaire) { %>
+                                <p class="text-gray-700"><%= avis.commentaire %></p>
+                            <% } %>
+                        </div>
+                    <% }); %>
+                </div>
+            <% } else { %>
+                <div class="text-center py-8">
+                    <i class="fas fa-comments text-4xl text-gray-400 mb-4"></i>
+                    <h3 class="text-xl font-semibold text-gray-600 mb-2">Aucun avis pour le moment</h3>
+                    <p class="text-gray-500">Soyez le premier à donner votre avis sur ce produit</p>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</section>
+
+<script>
+// Données du produit et variants
+const variants = <%- JSON.stringify(variants) %>;
+const isLoggedIn = <%= user ? 'true' : 'false' %>;
+
+// Variables globales
+let selectedSize = null;
+let selectedColor = null;
+let selectedVariant = null;
+let quantity = 1;
+let currentImageIndex = 0;
+let totalImages = 0;
+
+// Initialisation
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Page produit chargée');
+    console.log('Variants disponibles:', variants);
+    
+    initializeSlider();
+    updateCartCount();
+});
+
+// === SLIDER FUNCTIONS ===
+function initializeSlider() {
+    const imageSlider = document.getElementById('image-slider');
+    if (imageSlider) {
+        totalImages = imageSlider.querySelectorAll('.slider-image').length;
+        console.log('Slider initialisé avec', totalImages, 'images');
+        updateSliderDisplay();
+    }
+}
+
+function changeSliderImage(direction) {
+    if (totalImages <= 1) return;
+    
+    currentImageIndex = currentImageIndex + direction;
+    
+    if (currentImageIndex >= totalImages) {
+        currentImageIndex = 0;
+    } else if (currentImageIndex < 0) {
+        currentImageIndex = totalImages - 1;
+    }
+    
+    updateSliderDisplay();
+}
+
+function setSliderImage(index) {
+    if (index >= 0 && index < totalImages) {
+        currentImageIndex = index;
+        updateSliderDisplay();
+    }
+}
+
+function updateSliderDisplay() {
+    // Mettre à jour les images
+    const images = document.querySelectorAll('.slider-image');
+    images.forEach((img, index) => {
+        img.style.opacity = index === currentImageIndex ? '1' : '0';
+    });
+    
+    // Mettre à jour les indicateurs
+    const indicators = document.querySelectorAll('.dot-indicator');
+    indicators.forEach((dot, index) => {
+        dot.style.opacity = index === currentImageIndex ? '1' : '0.6';
+    });
+    
+    // Mettre à jour les miniatures
+    const thumbnails = document.querySelectorAll('.thumbnail-image');
+    thumbnails.forEach((thumb, index) => {
+        thumb.style.borderColor = index === currentImageIndex ? '#8B4513' : 'transparent';
+    });
+}
+
+// === VARIANT SELECTION ===
+function selectSize(size) {
+    console.log('Taille sélectionnée:', size);
+    selectedSize = size;
+    
+    // Mettre à jour l'apparence des boutons
+    document.querySelectorAll('.size-btn').forEach(btn => {
+        btn.classList.remove('border-bogolan', 'bg-bogolan', 'text-white');
+        btn.classList.add('border-gray-300');
+    });
+    
+    const selectedBtn = document.querySelector(`[data-taille="${size}"]`);
+    if (selectedBtn) {
+        selectedBtn.classList.add('border-bogolan', 'bg-bogolan', 'text-white');
+        selectedBtn.classList.remove('border-gray-300');
+    }
+    
+    checkVariantAvailability();
+}
+
+function selectColor(color) {
+    console.log('Couleur sélectionnée:', color);
+    selectedColor = color;
+    
+    // Mettre à jour l'apparence des boutons
+    document.querySelectorAll('.color-btn').forEach(btn => {
+        btn.classList.remove('border-bogolan', 'bg-bogolan', 'text-white');
+        btn.classList.add('border-gray-300');
+    });
+    
+    const selectedBtn = document.querySelector(`[data-couleur="${color}"]`);
+    if (selectedBtn) {
+        selectedBtn.classList.add('border-bogolan', 'bg-bogolan', 'text-white');
+        selectedBtn.classList.remove('border-gray-300');
+    }
+    
+    checkVariantAvailability();
+}
+
+function checkVariantAvailability() {
+    if (selectedSize && selectedColor) {
+        selectedVariant = variants.find(v => v.taille === selectedSize && v.couleur === selectedColor);
+        
+        console.log('Variant trouvé:', selectedVariant);
+        
+        if (selectedVariant) {
+            updateStockStatus();
+            enableAddToCart();
+        } else {
+            document.getElementById('stock-status').innerHTML = '<span class="text-red-600">Combinaison non disponible</span>';
+            disableAddToCart();
+        }
+    } else {
+        document.getElementById('stock-status').innerHTML = '<span class="text-gray-500">Sélectionnez une taille et une couleur</span>';
+        disableAddToCart();
+    }
+}
+
+function updateStockStatus() {
+    const stockStatus = document.getElementById('stock-status');
+    
+    if (selectedVariant.stock_actuel > 0) {
+        stockStatus.innerHTML = `<span class="text-green-600"><i class="fas fa-check mr-1"></i>En stock (${selectedVariant.stock_actuel} disponible(s))</span>`;
+    } else {
+        stockStatus.innerHTML = '<span class="text-red-600"><i class="fas fa-times mr-1"></i>Rupture de stock</span>';
+        disableAddToCart();
+    }
+}
+
+function enableAddToCart() {
+    if (selectedVariant && selectedVariant.stock_actuel > 0) {
+        document.getElementById('add-to-cart-btn').disabled = false;
+        document.getElementById('decrease-btn').disabled = false;
+        document.getElementById('increase-btn').disabled = false;
+    }
+}
+
+function disableAddToCart() {
+    document.getElementById('add-to-cart-btn').disabled = true;
+    document.getElementById('decrease-btn').disabled = true;
+    document.getElementById('increase-btn').disabled = true;
+}
+
+// === QUANTITY MANAGEMENT ===
+function changeQuantity(change) {
+    if (!selectedVariant) return;
+    
+    const newQuantity = quantity + change;
+    
+    if (newQuantity >= 1 && newQuantity <= selectedVariant.stock_actuel) {
+        quantity = newQuantity;
+        document.getElementById('quantity').textContent = quantity;
+    }
+}
+
+// === ADD TO CART ===
+async function addToCart() {
+    console.log('Tentative ajout au panier');
+    
+    if (!selectedVariant) {
+        showNotification('Veuillez sélectionner une taille et une couleur', 'error');
+        return;
+    }
+    
+    if (!isLoggedIn) {
+        // Panier temporaire pour utilisateurs non connectés
+        const cartItem = {
+            variant_id: selectedVariant.id,
+            quantite: quantity,
+            produit: {
+                nom: '<%= produit.nom %>',
+                prix_vente: '<%= produit.prix_vente %>',
+                images: '<%= produit.images %>',
+                taille: selectedVariant.taille,
+                couleur: selectedVariant.couleur
+            }
+        };
+        
+        let tempCart = JSON.parse(localStorage.getItem('tempCart') || '[]');
+        
+        const existingIndex = tempCart.findIndex(item => 
+            item.variant_id === selectedVariant.id
+        );
+        
+        if (existingIndex > -1) {
+            tempCart[existingIndex].quantite += quantity;
+        } else {
+            tempCart.push(cartItem);
+        }
+        
+        localStorage.setItem('tempCart', JSON.stringify(tempCart));
+        
+        showNotification('Produit ajouté ! Connectez-vous pour finaliser', 'success');
+        
+        setTimeout(() => {
+            window.location.href = '/connexion?redirect=panier';
+        }, 2000);
+        
+        return;
+    }
+    
+    // Utilisateur connecté - ajout direct au panier
+    try {
+        const response = await fetch('/api/panier/ajouter', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                variant_id: selectedVariant.id,
+                quantite: quantity
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showNotification('Produit ajouté au panier', 'success');
+            updateCartCount();
+        } else {
+            showNotification(data.message || 'Erreur lors de l\'ajout au panier', 'error');
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+        showNotification('Erreur lors de l\'ajout au panier', 'error');
+    }
+}
+
+// === UTILITY FUNCTIONS ===
+async function updateCartCount() {
+    if (isLoggedIn) {
+        try {
+            const response = await fetch('/api/panier/count');
+            const data = await response.json();
+            if (data.success) {
+                const cartCountElement = document.getElementById('cart-count');
+                if (cartCountElement) {
+                    cartCountElement.textContent = data.count;
+                }
+            }
+        } catch (error) {
+            console.error('Erreur chargement panier:', error);
+        }
+    }
+}
+
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    const bgColor = type === 'success' ? 'bg-green-500' : 'bg-red-500';
+    
+    notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg ${bgColor} text-white max-w-sm`;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+</script>
+
+<%- include('partials/footer') %>

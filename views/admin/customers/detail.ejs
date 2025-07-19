@@ -1,0 +1,19 @@
+<%- include('../partials/header', { 
+    title: 'Clients',
+    currentPage: 'customers_detail',
+    pageTitle: 'Gestion des Clients',
+    headerActions: `
+        <form method="GET" class="flex">
+            <input type="text" name="search" placeholder="Rechercher un client..." value="${customer.prenom}"
+                   class="border border-terre-300 rounded-l-lg px-4 py-2 text-terre-700 bg-white focus:ring-bogolan-500 focus:border-bogolan-500">
+            <button type="submit" class="btn-primary px-4 py-2 rounded-r-lg hover:bg-bogolan-700 transition-colors">
+                <i class="fas fa-search"></i>
+            </button>
+        </form>
+    `
+}) %>
+
+
+<h2 class="text-xl font-semibold text-gray-800">Voici les information lier à <%= customer.prenom %></h2>
+
+<%- include('../partials/footer') %>

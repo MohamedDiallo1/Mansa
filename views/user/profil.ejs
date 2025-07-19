@@ -1,0 +1,293 @@
+<%- include('partials/header', { title: title, user: user }) %>
+
+<section class="py-8 min-h-screen bg-gray-100">
+    <div class="container mx-auto px-4">
+        <!-- Breadcrumb -->
+        <nav class="flex mb-8" aria-label="Breadcrumb">
+            <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                <li class="inline-flex items-center">
+                    <a href="/" class="text-gray-700 hover:text-bogolan">
+                        <i class="fas fa-home"></i>
+                    </a>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
+                        <span class="text-gray-500">Mon Profil</span>
+                    </div>
+                </li>
+            </ol>
+        </nav>
+
+        <div class="max-w-4xl mx-auto">
+            <!-- Header -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <div class="flex items-center space-x-4">
+                    <div class="w-16 h-16 bg-bogolan rounded-full flex items-center justify-center">
+                        <i class="fas fa-user text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-bogolan">
+                            <%= user.civilite %> <%= user.prenom %> <%= user.nom %>
+                        </h1>
+                        <p class="text-gray-600"><%= user.email %></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Success/Error Messages -->
+            <% if (success) { %>
+                <div class="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    Profil mis à jour avec succès !
+                </div>
+            <% } %>
+
+            <% if (error) { %>
+                <div class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+                    <i class="fas fa-exclamation-circle mr-2"></i>
+                    Erreur lors de la mise à jour du profil.
+                </div>
+            <% } %>
+
+            <!-- Profile Form -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-bold mb-6 text-bogolan">Informations personnelles</h2>
+                
+                <form action="/profil" method="POST" class="space-y-6">
+                    <!-- Informations de base -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label for="civilite" class="block text-sm font-medium text-gray-700 mb-2">
+                                Civilité
+                            </label>
+                            <select 
+                                id="civilite" 
+                                name="civilite" 
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-bogolan focus:border-bogolan"
+                            >
+                                <option value="">Choisir</option>
+                                <option value="M" <%= user.civilite === 'M' ? 'selected' : '' %>>M.</option>
+                                <option value="Mme" <%= user.civilite === 'Mme' ? 'selected' : '' %>>Mme</option>
+                                <option value="Mlle" <%= user.civilite === 'Mlle' ? 'selected' : '' %>>Mlle</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="prenom" class="block text-sm font-medium text-gray-700 mb-2">
+                                Prénom *
+                            </label>
+                            <input 
+                                type="text" 
+                                id="prenom" 
+                                name="prenom" 
+                                value="<%= user.prenom || '' %>"
+                                required 
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-bogolan focus:border-bogolan"
+                            >
+                        </div>
+
+                        <div>
+                            <label for="nom" class="block text-sm font-medium text-gray-700 mb-2">
+                                Nom *
+                            </label>
+                            <input 
+                                type="text" 
+                                id="nom" 
+                                name="nom" 
+                                value="<%= user.nom || '' %>"
+                                required 
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-bogolan focus:border-bogolan"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Contact -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                                Email *
+                            </label>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                name="email" 
+                                value="<%= user.email || '' %>"
+                                required 
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-bogolan focus:border-bogolan"
+                            >
+                        </div>
+
+                        <div>
+                            <label for="telephone" class="block text-sm font-medium text-gray-700 mb-2">
+                                Téléphone
+                            </label>
+                            <input 
+                                type="tel" 
+                                id="telephone" 
+                                name="telephone" 
+                                value="<%= user.telephone || '' %>"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-bogolan focus:border-bogolan"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Date de naissance -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="date_naissance" class="block text-sm font-medium text-gray-700 mb-2">
+                                Date de naissance
+                            </label>
+                            <input 
+                                type="date" 
+                                id="date_naissance" 
+                                name="date_naissance" 
+                                value="<%= user.date_naissance ? user.date_naissance.toISOString().split('T')[0] : '' %>"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-bogolan focus:border-bogolan"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Adresse -->
+                    <div class="border-t pt-6">
+                        <h3 class="text-lg font-semibold mb-4 text-bogolan">Adresse</h3>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label for="adresse_ligne1" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Adresse ligne 1
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="adresse_ligne1" 
+                                    name="adresse_ligne1" 
+                                    value="<%= user.adresse_ligne1 || '' %>"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-bogolan focus:border-bogolan"
+                                >
+                            </div>
+
+                            <div>
+                                <label for="adresse_ligne2" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Adresse ligne 2
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="adresse_ligne2" 
+                                    name="adresse_ligne2" 
+                                    value="<%= user.adresse_ligne2 || '' %>"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-bogolan focus:border-bogolan"
+                                >
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label for="ville" class="block text-sm font-medium text-gray-700 mb-2">
+                                        Ville
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        id="ville" 
+                                        name="ville" 
+                                        value="<%= user.ville || '' %>"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-bogolan focus:border-bogolan"
+                                    >
+                                </div>
+
+                                <div>
+                                    <label for="code_postal" class="block text-sm font-medium text-gray-700 mb-2">
+                                        Code postal
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        id="code_postal" 
+                                        name="code_postal" 
+                                        value="<%= user.code_postal || '' %>"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-bogolan focus:border-bogolan"
+                                    >
+                                </div>
+
+                                <div>
+                                    <label for="pays" class="block text-sm font-medium text-gray-700 mb-2">
+                                        Pays
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        id="pays" 
+                                        name="pays" 
+                                        value="<%= user.pays || 'France' %>"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-bogolan focus:border-bogolan"
+                                    >
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="region" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Région
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="region" 
+                                    name="region" 
+                                    value="<%= user.region || '' %>"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-bogolan focus:border-bogolan"
+                                >
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Préférences -->
+                    <div class="border-t pt-6">
+                        <h3 class="text-lg font-semibold mb-4 text-bogolan">Préférences</h3>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-center">
+                                <input 
+                                    type="checkbox" 
+                                    id="newsletter" 
+                                    name="newsletter" 
+                                    <%= user.newsletter ? 'checked' : '' %>
+                                    class="h-4 w-4 text-bogolan focus:ring-bogolan border-gray-300 rounded"
+                                >
+                                <label for="newsletter" class="ml-2 block text-sm text-gray-700">
+                                    Recevoir la newsletter avec les dernières collections
+                                </label>
+                            </div>
+
+                            <div class="flex items-center">
+                                <input 
+                                    type="checkbox" 
+                                    id="sms_marketing" 
+                                    name="sms_marketing" 
+                                    <%= user.sms_marketing ? 'checked' : '' %>
+                                    class="h-4 w-4 text-bogolan focus:ring-bogolan border-gray-300 rounded"
+                                >
+                                <label for="sms_marketing" class="ml-2 block text-sm text-gray-700">
+                                    Recevoir des notifications SMS sur les promotions
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="border-t pt-6 flex space-x-4">
+                        <button 
+                            type="submit" 
+                            class="bg-bogolan text-white px-6 py-2 rounded-lg font-semibold hover:bg-bogolan-light transition-colors"
+                        >
+                            Mettre à jour le profil
+                        </button>
+                        
+                        <a 
+                            href="/mes-commandes" 
+                            class="bg-terre text-white px-6 py-2 rounded-lg font-semibold hover:bg-terre-light transition-colors"
+                        >
+                            Mes commandes
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('partials/footer') %>

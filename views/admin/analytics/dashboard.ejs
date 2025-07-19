@@ -1,0 +1,219 @@
+<%- include('../partials/header', { 
+    title: 'Analytics',
+    currentPage: 'analytics',
+    pageTitle: 'Analytics & Rapports',
+    pageSubtitle: 'Analyse des performances et bénéfices'
+}) %>
+
+<script>
+// Données globales pour les graphiques
+window.analyticsData = {
+    ventesParMois: [
+        <% if (typeof ventesParMois !== 'undefined' && ventesParMois.length > 0) { %>
+            <% ventesParMois.forEach((vente, index) => { %>
+                {
+                    mois: '<%= vente.mois %>',
+                    chiffre_affaires: <%= vente.chiffre_affaires || 0 %>,
+                    benefice_total: <%= vente.benefice_total || 0 %>
+                }<%= index < ventesParMois.length - 1 ? ',' : '' %>
+            <% }); %>
+        <% } %>
+    ]
+};
+</script>
+
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-800">Analytics & Bénéfices</h1>
+        <div class="flex space-x-4">
+            <a href="/analytics/reports" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                <i class="fas fa-chart-line mr-2"></i>Rapports détaillés
+            </a>
+        </div>
+    </div>
+
+    <!-- Statistiques générales -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600">Total Produits</p>
+                    <p class="text-2xl font-bold text-gray-800"><%= stats.total_produits || 0 %></p>
+                </div>
+                <div class="bg-blue-100 p-3 rounded-full">
+                    <i class="fas fa-box text-blue-600"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600">Total Commandes</p>
+                    <p class="text-2xl font-bold text-gray-800"><%= stats.total_commandes || 0 %></p>
+                </div>
+                <div class="bg-green-100 p-3 rounded-full">
+                    <i class="fas fa-shopping-cart text-green-600"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600">Chiffre d'affaires</p>
+                    <p class="text-2xl font-bold text-gray-800"><%= parseFloat(stats.chiffre_affaires_total || 0).toFixed(2) %>€</p>
+                </div>
+                <div class="bg-yellow-100 p-3 rounded-full">
+                    <i class="fas fa-euro-sign text-yellow-600"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600">Panier moyen</p>
+                    <p class="text-2xl font-bold text-gray-800"><%= parseFloat(stats.panier_moyen || 0).toFixed(2) %>€</p>
+                </div>
+                <div class="bg-purple-100 p-3 rounded-full">
+                    <i class="fas fa-chart-bar text-purple-600"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Graphique des bénéfices -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <h2 class="text-xl font-bold mb-6">Évolution des bénéfices</h2>
+        <div class="h-80">
+            <canvas id="beneficesChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Bénéfices par produit -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Tableau des bénéfices -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-bold mb-6">Bénéfices par produit</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full table-auto">
+                    <thead>
+                        <tr class="bg-gray-50">
+                            <th class="px-4 py-2 text-left">Produit</th>
+                            <th class="px-4 py-2 text-left">Prix achat</th>
+                            <th class="px-4 py-2 text-left">Prix vente</th>
+                            <th class="px-4 py-2 text-left">Bénéfice</th>
+                            <th class="px-4 py-2 text-left">Marge %</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% benefices.forEach(benefice => { %>
+                            <tr class="border-b">
+                                <td class="px-4 py-2 font-medium"><%= benefice.nom %></td>
+                                <td class="px-4 py-2"><%= parseFloat(benefice.prix_achat || 0).toFixed(2) %>€</td>
+                                <td class="px-4 py-2">
+                                    <% if (benefice.prix_promo > 0) { %>
+                                        <span class="text-red-600"><%= parseFloat(benefice.prix_promo).toFixed(2) %>€</span>
+                                    <% } else { %>
+                                        <%= parseFloat(benefice.prix_vente).toFixed(2) %>€
+                                    <% } %>
+                                </td>
+                                <td class="px-4 py-2 font-bold <%= benefice.benefice_unitaire >= 0 ? 'text-green-600' : 'text-red-600' %>">
+                                    <%= parseFloat(benefice.benefice_unitaire || 0).toFixed(2) %>€
+                                </td>
+                                <td class="px-4 py-2 <%= benefice.marge_pourcentage >= 0 ? 'text-green-600' : 'text-red-600' %>">
+                                    <%= parseFloat(benefice.marge_pourcentage || 0).toFixed(1) %>%
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Top produits -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-bold mb-6">Top produits par bénéfice</h2>
+            <div class="space-y-4">
+                <% topProduits.forEach((produit, index) => { %>
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-sm">
+                                <%= index + 1 %>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold"><%= produit.nom %></h3>
+                                <p class="text-sm text-gray-600"><%= produit.quantite_vendue %> vendus</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-green-600"><%= parseFloat(produit.benefice_total || 0).toFixed(2) %>€</p>
+                            <p class="text-sm text-gray-600">CA: <%= parseFloat(produit.chiffre_affaires || 0).toFixed(2) %>€</p>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Graphique des bénéfices
+const ctx = document.getElementById('beneficesChart').getContext('2d');
+
+// Données pour le graphique - données réelles de la base
+const ventesData = window.analyticsData.ventesParMois || [];
+const labels = ventesData.map(v => {
+    if (v.mois) {
+        const date = new Date(v.mois + '-01');
+        return date.toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' });
+    }
+    return 'N/A';
+}).reverse();
+const chiffreAffaires = ventesData.map(v => parseFloat(v.chiffre_affaires || 0)).reverse();
+const benefices = ventesData.map(v => parseFloat(v.benefice_total || 0)).reverse();
+
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: labels,
+        datasets: [{
+            label: 'Chiffre d\'affaires',
+            data: chiffreAffaires,
+            borderColor: 'rgb(59, 130, 246)',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            tension: 0.1
+        }, {
+            label: 'Bénéfices',
+            data: benefices,
+            borderColor: 'rgb(34, 197, 94)',
+            backgroundColor: 'rgba(34, 197, 94, 0.1)',
+            tension: 0.1
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            title: {
+                display: true,
+                text: 'Évolution du chiffre d\'affaires et des bénéfices'
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: function(value) {
+                        return value + '€';
+                    }
+                }
+            }
+        }
+    }
+});
+</script>
+
+<%- include('../partials/footer') %>
